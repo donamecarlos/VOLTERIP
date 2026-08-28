@@ -426,6 +426,37 @@
             margin-bottom: 22px;
         }
 
+        .card-title .head-actions {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-title .btn-clear {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .4px;
+            text-transform: none;
+            padding: 7px 12px;
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            border-radius: 9px;
+            color: var(--gray-400);
+            cursor: pointer;
+            transition: all .25s ease;
+        }
+
+        .card-title .btn-clear:hover {
+            color: var(--red);
+            border-color: var(--red);
+            background: #FDE8E8;
+            transform: translateY(-1px);
+        }
+
         .card-title .ico {
             width: 30px;
             height: 30px;
@@ -662,6 +693,34 @@
             border-radius: 4px;
         }
 
+        .history-empty {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            padding: 40px 16px;
+            color: var(--gray-400);
+            text-align: center;
+        }
+
+        .history-empty .he-ico {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--gray-100);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-300);
+        }
+
+        .history-empty p {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
         .history-item {
             display: flex;
             align-items: center;
@@ -757,6 +816,29 @@
             color: var(--white);
             transform: translateY(-1px);
             box-shadow: 0 6px 14px rgba(40, 125, 20, .25);
+        }
+
+        .btn-ticket {
+            width: 30px;
+            height: 30px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            border: 1px solid var(--gray-300);
+            background: var(--white);
+            color: var(--green);
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 1;
+            cursor: pointer;
+            transition: all .25s ease;
+        }
+
+        .btn-ticket:hover {
+            background: var(--green);
+            border-color: var(--green);
+            color: var(--white);
+            transform: scale(1.12);
+            box-shadow: 0 6px 14px rgba(40, 125, 20, .3);
         }
 
         .history-empty {
@@ -864,6 +946,138 @@
         .btn-reject:hover .ring {
             background: #A82620;
             transform: scale(1.06);
+        }
+
+        /* ---------- Ticket de llamada ---------- */
+        .ticket-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 210;
+            background: rgba(26, 26, 26, .45);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity .3s ease;
+        }
+
+        .ticket-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .ticket-card {
+            width: min(92vw, 380px);
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 24px 70px rgba(26, 26, 26, .3);
+            overflow: hidden;
+            transform: translateY(24px) scale(.95);
+            transition: transform .35s ease;
+        }
+
+        .ticket-overlay.show .ticket-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .ticket-head {
+            background: var(--green-dark);
+            color: var(--white);
+            padding: 20px 22px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ticket-head h3 {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: .4px;
+        }
+
+        .ticket-head .ticket-close {
+            background: transparent;
+            border: none;
+            color: var(--white);
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: background .2s ease;
+        }
+
+        .ticket-head .ticket-close:hover {
+            background: rgba(255, 255, 255, .18);
+        }
+
+        .ticket-body {
+            padding: 20px 22px 24px;
+        }
+
+        .ticket-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--gray-200);
+            font-size: 14px;
+        }
+
+        .ticket-row .k {
+            color: var(--gray-400);
+            font-weight: 500;
+        }
+
+        .ticket-row .v {
+            color: var(--black);
+            font-weight: 600;
+        }
+
+        .ticket-row .v.big {
+            font-size: 16px;
+        }
+
+        .ticket-breakdown {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 14px 16px;
+            margin-top: 16px;
+            font-size: 13px;
+            color: var(--gray-400);
+        }
+
+        .ticket-breakdown .line {
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 0;
+        }
+
+        .ticket-total {
+            margin-top: 16px;
+            background: #E5F2E0;
+            border: 1px solid #CBE4C5;
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ticket-total .t {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--green-dark);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .ticket-total .amt {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--green-dark);
         }
 
         @media (max-width: 860px) {
@@ -1065,84 +1279,69 @@
                         </svg>
                     </span>
                     Historial de llamadas
+
+                    <button class="btn-clear" onclick="clearHistory()">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                        </svg>
+                        Limpiar
+                    </button>
                 </div>
 
-                <ul class="history-list" id="historyList">
+                <ul class="history-list" id="historyList"></ul>
 
-                    <li class="history-item">
-                        <div class="history-ico out">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
-                            </svg>
-                        </div>
-                        <div class="history-info">
-                            <div class="history-number">(555) 123-4567</div>
-                            <div class="history-meta">Saliente · 02:45 min</div>
-                        </div>
-                        <button class="btn-callback" onclick="redial('(555) 123-4567')">Llamar</button>
-                        <span class="history-time">Hoy 09:12</span>
-                    </li>
-
-                    <li class="history-item">
-                        <div class="history-ico in">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="17" y1="7" x2="7" y2="17"/><polyline points="17 17 7 17 7 7"/>
-                            </svg>
-                        </div>
-                        <div class="history-info">
-                            <div class="history-number">(555) 987-1234</div>
-                            <div class="history-meta">Entrante · 01:08 min</div>
-                        </div>
-                        <button class="btn-callback" onclick="redial('(555) 987-1234')">Llamar</button>
-                        <span class="history-time">Hoy 08:40</span>
-                    </li>
-
-                    <li class="history-item">
-                        <div class="history-ico missed">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
-                                <line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>
-                            </svg>
-                        </div>
-                        <div class="history-info">
-                            <div class="history-number">(555) 555-0199</div>
-                            <div class="history-meta">Perdida</div>
-                        </div>
-                        <button class="btn-callback" onclick="redial('(555) 555-0199')">Llamar</button>
-                        <span class="history-time">Ayer 18:25</span>
-                    </li>
-
-                    <li class="history-item">
-                        <div class="history-ico out">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
-                            </svg>
-                        </div>
-                        <div class="history-info">
-                            <div class="history-number">(555) 314-1592</div>
-                            <div class="history-meta">Saliente · 00:37 min</div>
-                        </div>
-                        <button class="btn-callback" onclick="redial('(555) 314-1592')">Llamar</button>
-                        <span class="history-time">Ayer 15:02</span>
-                    </li>
-
-                    <li class="history-item">
-                        <div class="history-ico in">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                                <line x1="17" y1="7" x2="7" y2="17"/><polyline points="17 17 7 17 7 7"/>
-                            </svg>
-                        </div>
-                        <div class="history-info">
-                            <div class="history-number">(555) 271-8281</div>
-                            <div class="history-meta">Entrante · 03:14 min</div>
-                        </div>
-                        <button class="btn-callback" onclick="redial('(555) 271-8281')">Llamar</button>
-                        <span class="history-time">Lun 11:47</span>
-                    </li>
-
-                </ul>
+                <div class="history-empty" id="historyEmpty" style="display:none">
+                    <div class="he-ico">
+                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                    </div>
+                    <p>No hay llamadas registradas</p>
+                </div>
             </section>
         </div>
     </main>
+
+    <!-- Ticket de llamada -->
+    <div class="ticket-overlay" id="ticketOverlay" onclick="if(event.target===this)closeTicket()">
+        <div class="ticket-card">
+            <div class="ticket-head">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-3px;margin-right:6px">
+                        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+                    </svg>
+                    Ticket de llamada
+                </h3>
+                <button class="ticket-close" onclick="closeTicket()" title="Cerrar">&times;</button>
+            </div>
+            <div class="ticket-body">
+                <div class="ticket-row">
+                    <span class="k">Tipo</span>
+                    <span class="v" id="tktType">-</span>
+                </div>
+                <div class="ticket-row">
+                    <span class="k">Número</span>
+                    <span class="v big" id="tktNumber">-</span>
+                </div>
+                <div class="ticket-row">
+                    <span class="k">Duración</span>
+                    <span class="v" id="tktDuration">-</span>
+                </div>
+                <div class="ticket-row">
+                    <span class="k">Fecha</span>
+                    <span class="v" id="tktDate">-</span>
+                </div>
+
+                <div class="ticket-breakdown" id="tktBreakdown"></div>
+
+                <div class="ticket-total">
+                    <span class="t">Total</span>
+                    <span class="amt" id="tktTotal">C$0.00</span>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Notificación de llamada entrante -->
     <div class="incoming-overlay" id="incomingOverlay">
@@ -1406,6 +1605,7 @@
         }
 
         function stopTimer() {
+            lastCallSeconds = callSeconds;
             lastCallDuration = formatDuration(callSeconds);
             if (callTimerId) clearInterval(callTimerId);
             callTimerId = null;
@@ -1418,12 +1618,174 @@
             timerEl.textContent = '00:00:00';
         }
 
-        function finalizeHistory(meta) {
+        function finalizeHistory(meta, seconds) {
             if (activeHistoryItem) {
                 const el = activeHistoryItem.querySelector('.history-meta');
                 if (el && meta) el.textContent = meta;
+                const tid = activeHistoryItem.dataset.tid;
+                if (tid) persistTicket(tid, seconds || 0);
                 activeHistoryItem = null;
             }
+        }
+
+        // ---------- Tarifas / tickets ----------
+        const ticketStore = new Map();
+        const RATES = { perSecond: 0.08, perMinute: 4.80, perHour: 288.00 };
+        let ticketSeq = 0;
+        let lastCallSeconds = 0;
+
+        function newTicketId() {
+            return 'T' + (++ticketSeq) + '-' + Date.now();
+        }
+
+        function money(n) {
+            return 'C$' + (Number(n) || 0).toFixed(2);
+        }
+
+        function formatDur(secs) {
+            const s = Math.max(0, Math.floor(secs || 0));
+            const h = Math.floor(s / 3600);
+            const m = Math.floor((s % 3600) / 60);
+            const x = s % 60;
+            const p = (n) => n.toString().padStart(2, '0');
+            return (h > 0 ? p(h) + ':' : '') + p(m) + ':' + p(x);
+        }
+
+        function formatWhen(d) {
+            const now = new Date();
+            const t = d.getHours().toString().padStart(2, '0') + ':' + d.getMinutes().toString().padStart(2, '0');
+            if (d.toDateString() === now.toDateString()) return 'Hoy ' + t;
+            const y = d.getMonth() + 1 + '/' + d.getDate();
+            return d.getFullYear() === now.getFullYear() ? y + ' ' + t : d.getFullYear() + '/' + y + ' ' + t;
+        }
+
+        function metaFor(type, missed, secs) {
+            if (missed) return 'Perdida';
+            return (type === 'in' ? 'Entrante' : 'Saliente') + ' · ' + formatDur(secs) + ' min';
+        }
+
+        function syncEmpty() {
+            const list = document.getElementById('historyList');
+            document.getElementById('historyEmpty').style.display = list.children.length ? 'none' : 'flex';
+        }
+
+        function persistTicket(tid, seconds) {
+            const t = ticketStore.get(tid);
+            if (!t || t.persisted) return;
+            const secs = Math.max(0, Math.round(seconds || 0));
+            t.seconds = secs;
+            const type = t.missed ? 'missed' : (t.type === 'in' ? 'in' : 'out');
+            const isOutgoing = !t.missed && t.type === 'out' && secs > 0;
+            t.cost = isOutgoing ? Math.round(secs * RATES.perSecond * 100) / 100 : 0;
+            const body = {
+                caller: type === 'out' ? myExt : t.number,
+                callee: type === 'out' ? t.number : myExt,
+                seconds: secs,
+                type,
+            };
+            fetch('/api/tarifas', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(body),
+            }).then(r => r.json()).then(d => {
+                if (d && d.ok && d.record) {
+                    t.cost = d.record.cost || 0;
+                    t.persisted = true;
+                }
+            }).catch(() => {});
+        }
+
+        function showTicket(tid) {
+            const t = ticketStore.get(tid);
+            if (!t) return;
+            document.getElementById('tktType').textContent = t.missed ? 'Llamada perdida' : (t.type === 'in' ? 'Entrante' : 'Saliente');
+            document.getElementById('tktNumber').textContent = t.number;
+            document.getElementById('tktDuration').textContent = t.missed ? '—' : formatDur(t.seconds);
+            document.getElementById('tktDate').textContent = formatWhen(new Date(t.createdAt));
+            const bd = document.getElementById('tktBreakdown');
+            const charged = !t.missed && t.type === 'out' && t.seconds > 0;
+            if (charged) {
+                bd.innerHTML =
+                    '<div class="line"><span>Cobro por segundo</span><span>' + money(RATES.perSecond) + '</span></div>' +
+                    '<div class="line"><span>Cobro por minuto</span><span>' + money(RATES.perMinute) + '</span></div>' +
+                    '<div class="line"><span>Cobro por hora</span><span>' + money(RATES.perHour) + '</span></div>' +
+                    '<div class="line"><span>Duración</span><span>' + formatDur(t.seconds) + '</span></div>' +
+                    '<div class="line"><span>Desglose (' + t.seconds + ' s × C$0.08)</span><span>' + money(t.cost) + '</span></div>';
+            } else {
+                bd.innerHTML = '<div class="line"><span>Sin cargo para esta llamada</span><span>' + money(0) + '</span></div>';
+            }
+            document.getElementById('tktTotal').textContent = money(t.cost);
+            document.getElementById('ticketOverlay').classList.add('show');
+        }
+
+        function closeTicket() {
+            document.getElementById('ticketOverlay').classList.remove('show');
+        }
+
+        function clearHistory() {
+            if (!myExt) return;
+            if (!confirm('¿Vaciar el historial de llamadas y eliminar todos los tickets?')) return;
+            fetch('/api/tarifas?user=' + encodeURIComponent(myExt), { method: 'DELETE' })
+                .then(r => r.json())
+                .then(d => {
+                    if (d && d.ok) {
+                        const list = document.getElementById('historyList');
+                        list.innerHTML = '';
+                        ticketStore.clear();
+                        syncEmpty();
+                    }
+                })
+                .catch(() => {});
+        }
+
+        function loadHistory() {
+            if (!myExt) return;
+            fetch('/api/tarifas?user=' + encodeURIComponent(myExt))
+                .then(r => r.json())
+                .then(d => {
+                    if (d && d.ok) {
+                        (d.records || []).forEach(renderRecord);
+                        syncEmpty();
+                    }
+                })
+                .catch(() => {});
+        }
+
+        function renderRecord(rec) {
+            const list = document.getElementById('historyList');
+            const item = document.createElement('li');
+            item.className = 'history-item';
+            const tid = String(rec._id);
+            const type = rec.type === 'out' ? 'out' : 'in';
+            const missed = rec.type === 'missed';
+            const number = type === 'out' ? rec.callee : rec.caller;
+            ticketStore.set(tid, {
+                id: tid,
+                number,
+                type,
+                missed,
+                seconds: rec.seconds || 0,
+                cost: rec.cost || 0,
+                createdAt: new Date(rec.createdAt),
+                persisted: true,
+            });
+            const cls = missed ? 'missed' : (type === 'in' ? 'in' : 'out');
+            const arrowOut = '<line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>';
+            const arrowIn = '<line x1="17" y1="7" x2="7" y2="17"/><polyline points="17 17 7 17 7 7"/>';
+            const crossMissed = '<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>';
+            const glyph = missed ? crossMissed : (type === 'in' ? arrowIn : arrowOut);
+            item.innerHTML =
+                '<div class="history-ico ' + cls + '">' +
+                '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' + glyph + '</svg>' +
+                '</div>' +
+                '<div class="history-info">' +
+                '<div class="history-number">' + number + '</div>' +
+                '<div class="history-meta">' + metaFor(type, missed, rec.seconds) + '</div>' +
+                '</div>' +
+                '<button class="btn-callback" onclick="redial(\'' + number + '\')">Llamar</button>' +
+                '<button class="btn-ticket" onclick="showTicket(\'' + tid + '\')" title="Ver ticket">+</button>' +
+                '<span class="history-time">' + formatWhen(new Date(rec.createdAt)) + '</span>';
+            list.prepend(item);
         }
 
         function addDigit(d) {
@@ -1459,7 +1821,11 @@
         }
 
         socket.on('call_result', (data) => {
-            if (!data.ok && data.reason === 'offline') {
+            if (data.ok) {
+                callId = data.callId; // para poder colgar correctamente durante el timbre
+                return;
+            }
+            if (data.reason === 'offline') {
                 stopTimer();
                 callRole = null;
                 playSound(offlineSnd); // no_en_linea.mp3
@@ -1513,7 +1879,8 @@
             document.getElementById('incomingOverlay').classList.remove('show');
             stopSounds();
             if (incomingCallId) {
-                addHistory(data.from, 'in', true); // llamada perdida
+                const hit = addHistory(data.from || 'Desconocido', 'in', true); // llamada perdida
+                persistTicket(hit.dataset.tid, 0);
                 incomingCallId = null;
             }
         });
@@ -1555,7 +1922,8 @@
             if (incomingCallId === data.callId) {
                 document.getElementById('incomingOverlay').classList.remove('show');
                 stopSounds();
-                addHistory(data.callId.split(':')[0], 'in', true); // llamada perdida
+                const hit = addHistory(data.callId.split(':')[0], 'in', true); // llamada perdida
+                persistTicket(hit.dataset.tid, 0);
                 incomingCallId = null;
                 return;
             }
@@ -1565,13 +1933,13 @@
             if (data.reason === 'no_answer') {
                 playSound(noAnswerSnd); // no_contesta.mp3
                 setStatus('No contestó (' + data.callId.split(':')[1] + ')', false);
-                finalizeHistory('No contestó');
+                finalizeHistory('No contestó', 0);
             } else if (data.reason === 'rejected') {
                 setStatus('Llamada rechazada', false);
-                finalizeHistory('Rechazada');
+                finalizeHistory('Rechazada', 0);
             } else {
                 setStatus('Llamada finalizada · ' + lastCallDuration, false);
-                finalizeHistory(label + ' · ' + lastCallDuration + ' min');
+                finalizeHistory(label + ' · ' + lastCallDuration + ' min', lastCallSeconds);
             }
             if (callId === data.callId) callId = null;
             callRole = null;
@@ -1589,7 +1957,7 @@
             stopTimer();
             const label = callRole === 'callee' ? 'Entrante' : 'Saliente';
             setStatus('Llamada finalizada · ' + lastCallDuration, false);
-            finalizeHistory(label + ' · ' + lastCallDuration + ' min');
+            finalizeHistory(label + ' · ' + lastCallDuration + ' min', lastCallSeconds);
             callId = null;
             callRole = null;
             resetDialer();
@@ -1607,39 +1975,51 @@
             const item = document.createElement('li');
             item.className = 'history-item';
             const now = new Date();
-            const hm = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            const tid = newTicketId();
+            ticketStore.set(tid, { id: tid, number, type, missed, seconds: 0, cost: 0, createdAt: now });
+            item.dataset.tid = tid;
             const cls = missed ? 'missed' : (type === 'in' ? 'in' : 'out');
-            const meta = missed ? 'Perdida' : (type === 'in' ? 'Entrante' : 'Saliente') + ' · 00:00:00 min';
             const arrowOut = '<line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>';
             const arrowIn = '<line x1="17" y1="7" x2="7" y2="17"/><polyline points="17 17 7 17 7 7"/>';
             const crossMissed = '<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>';
             const glyph = missed ? crossMissed : (type === 'in' ? arrowIn : arrowOut);
-            item.innerHTML = `
-                <div class="history-ico ${cls}">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${glyph}</svg>
-                </div>
-                <div class="history-info">
-                    <div class="history-number">${number}</div>
-                    <div class="history-meta">${meta}</div>
-                </div>
-                <button class="btn-callback" onclick="redial('${number}')">Llamar</button>
-                <span class="history-time">Hoy ${hm}</span>`;
+            item.innerHTML =
+                '<div class="history-ico ' + cls + '">' +
+                '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">' + glyph + '</svg>' +
+                '</div>' +
+                '<div class="history-info">' +
+                '<div class="history-number">' + number + '</div>' +
+                '<div class="history-meta">' + metaFor(type, missed, 0) + '</div>' +
+                '</div>' +
+                '<button class="btn-callback" onclick="redial(\'' + number + '\')">Llamar</button>' +
+                '<button class="btn-ticket" onclick="showTicket(\'' + tid + '\')" title="Ver ticket">+</button>' +
+                '<span class="history-time">' + formatWhen(now) + '</span>';
             list.prepend(item);
             list.scrollTop = 0;
+            syncEmpty();
             return item;
         }
 
         // ---------- Teclado físico ----------
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && document.getElementById('incomingOverlay').classList.contains('show')) {
-                rejectCall();
-                return;
+            if (e.key === 'Escape') {
+                if (document.getElementById('ticketOverlay').classList.contains('show')) {
+                    closeTicket();
+                    return;
+                }
+                if (document.getElementById('incomingOverlay').classList.contains('show')) {
+                    rejectCall();
+                    return;
+                }
             }
             const keys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '#'];
             if (keys.includes(e.key)) addDigit(e.key);
             else if (e.key === 'Backspace') deleteDigit();
             else if (e.key === 'Enter') call();
         });
+
+        // ---------- Historial y tickets desde la base de datos ----------
+        loadHistory();
     </script>
 
 </body>

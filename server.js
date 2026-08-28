@@ -24,15 +24,18 @@ const client = new MongoClient(uri, {
 
 let db;
 let users;
+let tarifas;
 
 async function connectDB() {
     try {
         await client.connect();
         db = client.db(dbName);
         users = db.collection('users');
+        tarifas = db.collection('tarifas');
         await users.createIndex({ username: 1 }, { unique: true });
         await users.createIndex({ extension: 1 }, { unique: true });
         await users.createIndex({ email: 1 }, { unique: true });
+        await tarifas.createIndex({ extension: 1, createdAt: -1 });
         console.log('Conectado a MongoDB → base de datos: ' + dbName);
     } catch (err) {
         console.error('ERROR al conectar a MongoDB:', err.message);
@@ -152,6 +155,75 @@ app.post('/api/login', async (req, res) => {
 app.use('/views', express.static(path.join(__dirname, 'views')));
 app.use('/sounds', express.static(path.join(__dirname, 'sounds')));
 
+// ================= TARIFAS / TICKETS =================
+const RATE_PER_SEC = 0.08;   // C$0.08/s
+const RATE_PER_MIN = RATE_PER_SEC * 60;   // C$4.80/min
+const RATE_PER_HOUR = RATE_PER_MIN * 60;  // C$288/h
+const RATES = { perSecond: RATE_PER_SEC, perMinute: RATE_PER_MIN, perHour: RATE_PER_HOUR };
+
+function calcCost(seconds) {
+    return Math.round(seconds * RATE_PER_SEC * 100) / 100;
+}
+
+app.get('/api/rates', (req, res) => {
+    res.json({ ok: true, rates: RATES });
+});
+
+// Guardar el registro de una llamada en la colección "tarifas"
+app.post('/api/tarifas', async (req, res) => {
+    try {
+        const { caller, callee, seconds, type } = req.body;
+        if (!caller || !callee) {
+            return res.status(400).json({ ok: false, error: 'Faltan datos de la llamada.' });
+        }
+        const secs = Math.max(0, Math.round(Number(seconds) || 0));
+        const t = ['out', 'in', 'missed'].includes(type) ? type : 'out';
+        // Solo las salidas contestadas generan cobro
+        const cost = t === 'out' && secs > 0 ? calcCost(secs) : 0;
+        const extension = t === 'out' ? caller : callee; // dueño del registro
+        const record = {
+            extension,
+            caller,
+            callee,
+            seconds: secs,
+            cost,
+            type: t,
+            createdAt: new Date(),
+        };
+        const r = await tarifas.insertOne(record);
+        res.status(201).json({ ok: true, record: { _id: r.insertedId, ...record } });
+    } catch (err) {
+        console.error('Error en /api/tarifas:', err);
+        res.status(500).json({ ok: false, error: 'Error interno del servidor.' });
+    }
+});
+
+// Historial de tarifas de un usuario
+app.get('/api/tarifas', async (req, res) => {
+    try {
+        const user = (req.query.user || '').trim();
+        if (!user) return res.status(400).json({ ok: false, error: 'Falta el usuario.' });
+        const docs = await tarifas.find({ extension: user }).sort({ createdAt: -1 }).limit(200).toArray();
+        res.json({ ok: true, records: docs });
+    } catch (err) {
+        console.error('Error en GET /api/tarifas:', err);
+        res.status(500).json({ ok: false, error: 'Error interno del servidor.' });
+    }
+});
+
+// Limpiar el historial de tarifas de un usuario
+app.delete('/api/tarifas', async (req, res) => {
+    try {
+        const user = (req.query.user || '').trim();
+        if (!user) return res.status(400).json({ ok: false, error: 'Falta el usuario.' });
+        const r = await tarifas.deleteMany({ extension: user });
+        res.json({ ok: true, deleted: r.deletedCount });
+    } catch (err) {
+        console.error('Error en DELETE /api/tarifas:', err);
+        res.status(500).json({ ok: false, error: 'Error interno del servidor.' });
+    }
+});
+
 // ================= SOCKET.IO · TELEFONÍA =================
 const online = new Map(); // extensión -> socket id
 const calls = new Map();  // callId -> estado de la llamada
@@ -199,7 +271,7 @@ io.on('connection', (socket) => {
             if (!c || c.state !== 'ringing') return;
             c.state = 'no_answer';
             io.to(c.callerSocket).emit('call_ended', { callId, reason: 'no_answer' });
-            io.to(c.calleeSocket).emit('incoming_stop', { callId, reason: 'no_answer' });
+            io.to(c.calleeSocket).emit('incoming_stop', { callId, reason: 'no_answer', from: c.caller });
             calls.delete(callId);
         }, NO_ANSWER_MS);
     });
@@ -226,9 +298,16 @@ io.on('connection', (socket) => {
         const call = calls.get(data.callId);
         if (!call) return;
         clearTimeout(call.timeout);
+        const wasRinging = call.state === 'ringing';
         call.state = 'ended';
-        io.to(call.callerSocket).emit('call_ended', { callId: call.callId, reason: 'ended' });
-        io.to(call.calleeSocket).emit('call_ended', { callId: call.callId, reason: 'ended' });
+        if (wasRinging) {
+            // El llamante colgó mientras el receptor timbraba
+            io.to(call.callerSocket).emit('call_ended', { callId: call.callId, reason: 'ended' });
+            io.to(call.calleeSocket).emit('incoming_stop', { callId: call.callId, reason: 'caller_hangup', from: call.caller });
+        } else {
+            io.to(call.callerSocket).emit('call_ended', { callId: call.callId, reason: 'ended' });
+            io.to(call.calleeSocket).emit('call_ended', { callId: call.callId, reason: 'ended' });
+        }
         calls.delete(call.callId);
     });
 
