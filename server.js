@@ -1,0 +1,268 @@
+require('dotenv').config();
+const express = require('express');
+const cors = require('cors');
+const http = require('http');
+const path = require('path');
+const { MongoClient } = require('mongodb');
+const bcrypt = require('bcryptjs');
+const { Server } = require('socket.io');
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+const uri = process.env.MONGODB_URI;
+const dbName = process.env.DB_NAME || 'volterip';
+const PORT = process.env.PORT || 3000;
+
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: '*' } });
+
+const client = new MongoClient(uri, {
+    serverSelectionTimeoutMS: 15000,
+});
+
+let db;
+let users;
+
+async function connectDB() {
+    try {
+        await client.connect();
+        db = client.db(dbName);
+        users = db.collection('users');
+        await users.createIndex({ username: 1 }, { unique: true });
+        await users.createIndex({ extension: 1 }, { unique: true });
+        await users.createIndex({ email: 1 }, { unique: true });
+        console.log('Conectado a MongoDB → base de datos: ' + dbName);
+    } catch (err) {
+        console.error('ERROR al conectar a MongoDB:', err.message);
+        process.exit(1);
+    }
+}
+
+function normalizeUser(body) {
+    return {
+        name: (body.name || '').trim(),
+        email: (body.email || '').trim().toLowerCase(),
+        username: (body.username || '').trim(),
+        extension: (body.extension || (body.username || '').trim()).trim(),
+        password: body.password || '',
+    };
+}
+
+app.use(express.static(path.join(__dirname, 'views')));
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'views', 'login.html')));
+
+app.get('/api/health', (req, res) => {
+    res.json({ ok: true, db: dbName });
+});
+
+// ---------- REGISTRO ----------
+app.post('/api/register', async (req, res) => {
+    try {
+        const { name, email, username, extension, password } = normalizeUser(req.body);
+
+        if (!name || !email || !username || !password) {
+            return res.status(400).json({ ok: false, error: 'Completa todos los campos obligatorios.' });
+        }
+        if (password.length < 8) {
+            return res.status(400).json({ ok: false, error: 'La contraseña debe tener al menos 8 caracteres.' });
+        }
+        if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(email)) {
+            return res.status(400).json({ ok: false, error: 'El correo electrónico no es válido.' });
+        }
+
+        // Verificar si el usuario O la extensión ya existen
+        const dupUser = await users.findOne({ $or: [{ username }, { extension }] });
+        if (dupUser) {
+            const ocupado = dupUser.username === username ? 'El usuario' : 'La extensión';
+            return res.status(409).json({
+                ok: false,
+                error: ocupado + ' "' + (dupUser.username === username ? username : extension) + '" ya está ocupada. Elige otro usuario o extensión.',
+                conflict: dupUser.username === username ? 'username' : 'extension'
+            });
+        }
+
+        const dupEmail = await users.findOne({ email });
+        if (dupEmail) {
+            return res.status(409).json({ ok: false, error: 'El correo "' + email + '" ya está registrado.', conflict: 'email' });
+        }
+
+        const passwordHash = await bcrypt.hash(password, 10);
+        const user = {
+            name,
+            email,
+            username,
+            extension,
+            passwordHash,
+            status: 'disponible',
+            createdAt: new Date(),
+        };
+
+        try {
+            const result = await users.insertOne(user);
+            return res.status(201).json({
+                ok: true,
+                msg: 'Cuenta creada correctamente.',
+                user: { id: result.insertedId, name, email, username, extension }
+            });
+        } catch (e) {
+            if (e.code === 11000) {
+                return res.status(409).json({ ok: false, error: 'El usuario o la extensión ya está ocupada. No se pudo crear la cuenta.', conflict: 'unique' });
+            }
+            throw e;
+        }
+    } catch (err) {
+        console.error('Error en /register:', err);
+        res.status(500).json({ ok: false, error: 'Error interno del servidor.' });
+    }
+});
+
+// ---------- LOGIN ----------
+app.post('/api/login', async (req, res) => {
+    try {
+        const usuario = (req.body.user || '').trim().toLowerCase();
+        const password = req.body.password || '';
+
+        if (!usuario || !password) {
+            return res.status(400).json({ ok: false, error: 'Ingresa tu usuario y contraseña.' });
+        }
+
+        const found = await users.findOne({ $or: [{ username: usuario }, { email: usuario }] });
+        if (!found) {
+            return res.status(401).json({ ok: false, error: 'Usuario o contraseña incorrectos.' });
+        }
+
+        const valid = await bcrypt.compare(password, found.passwordHash);
+        if (!valid) {
+            return res.status(401).json({ ok: false, error: 'Usuario o contraseña incorrectos.' });
+        }
+
+        return res.json({
+            ok: true,
+            msg: 'Bienvenido ' + found.name,
+            user: { id: found._id, name: found.name, email: found.email, username: found.username, extension: found.extension }
+        });
+    } catch (err) {
+        console.error('Error en /login:', err);
+        res.status(500).json({ ok: false, error: 'Error interno del servidor.' });
+    }
+});
+
+app.use('/views', express.static(path.join(__dirname, 'views')));
+app.use('/sounds', express.static(path.join(__dirname, 'sounds')));
+
+// ================= SOCKET.IO · TELEFONÍA =================
+const online = new Map(); // extensión -> socket id
+const calls = new Map();  // callId -> estado de la llamada
+const NO_ANSWER_MS = 10000;
+
+io.on('connection', (socket) => {
+    socket.on('register', (data) => {
+        const ext = (data && data.extension || '').toString().trim();
+        if (!ext) return;
+        socket.data.extension = ext;
+        socket.data.userName = (data.name || '').trim();
+        online.set(ext, socket.id);
+        io.emit('presence', { extension: ext, online: true });
+        console.log('En línea:', ext, '(' + socket.data.userName + ')');
+    });
+
+    socket.on('call', (dest) => {
+        const src = socket.data.extension;
+        if (!src) return;
+        const target = online.get(dest);
+        const targetSocket = target && io.sockets.sockets.get(target);
+
+        if (!targetSocket || !targetSocket.connected) {
+            socket.emit('call_result', { ok: false, reason: 'offline', dest });
+            return;
+        }
+
+        const callId = src + ':' + dest + ':' + Date.now();
+        const call = {
+            callId,
+            caller: src,
+            callee: dest,
+            callerSocket: socket.id,
+            calleeSocket: target,
+            state: 'ringing',
+            timeout: null,
+        };
+
+        calls.set(callId, call);
+        socket.emit('call_result', { ok: true, callId, state: 'ringing', dest });
+        io.to(target).emit('incoming_call', { callId, from: src, fromName: socket.data.userName });
+
+        call.timeout = setTimeout(() => {
+            const c = calls.get(callId);
+            if (!c || c.state !== 'ringing') return;
+            c.state = 'no_answer';
+            io.to(c.callerSocket).emit('call_ended', { callId, reason: 'no_answer' });
+            io.to(c.calleeSocket).emit('incoming_stop', { callId, reason: 'no_answer' });
+            calls.delete(callId);
+        }, NO_ANSWER_MS);
+    });
+
+    socket.on('answer', (data) => {
+        const call = calls.get(data.callId);
+        if (!call || call.state !== 'ringing') return;
+        clearTimeout(call.timeout);
+        call.state = 'active';
+        io.to(call.callerSocket).emit('call_accepted', { callId: call.callId, with: call.callee });
+        io.to(call.calleeSocket).emit('call_connected', { callId: call.callId, with: call.caller });
+    });
+
+    socket.on('reject', (data) => {
+        const call = calls.get(data.callId);
+        if (!call) return;
+        clearTimeout(call.timeout);
+        call.state = 'rejected';
+        io.to(call.callerSocket).emit('call_ended', { callId: call.callId, reason: 'rejected' });
+        calls.delete(call.callId);
+    });
+
+    socket.on('end_call', (data) => {
+        const call = calls.get(data.callId);
+        if (!call) return;
+        clearTimeout(call.timeout);
+        call.state = 'ended';
+        io.to(call.callerSocket).emit('call_ended', { callId: call.callId, reason: 'ended' });
+        io.to(call.calleeSocket).emit('call_ended', { callId: call.callId, reason: 'ended' });
+        calls.delete(call.callId);
+    });
+
+    // ---------- Retransmisión WebRTC (ofertas, respuestas e ICE) ----------
+    const relayRTC = (eventName, data) => {
+        const call = calls.get(data.callId);
+        if (!call) return;
+        const peer = call.calleeSocket === socket.id ? call.callerSocket : call.calleeSocket;
+        io.to(peer).emit(eventName, { callId: data.callId, sdp: data.sdp, candidate: data.candidate });
+    };
+
+    socket.on('rtc_offer', (data) => relayRTC('rtc_offer', data));
+    socket.on('rtc_answer', (data) => relayRTC('rtc_answer', data));
+    socket.on('rtc_ice', (data) => relayRTC('rtc_ice', data));
+
+    socket.on('disconnect', () => {
+        const ext = socket.data.extension;
+        if (ext && online.get(ext) === socket.id) {
+            online.delete(ext);
+            io.emit('presence', { extension: ext, online: false });
+            console.log('Fuera de línea:', ext);
+        }
+        // Terminar llamadas activas de este usuario
+        for (const [callId, call] of calls.entries()) {
+            if (call.callerSocket === socket.id || call.calleeSocket === socket.id) {
+                clearTimeout(call.timeout);
+                io.to(call.callerSocket).emit('call_ended', { callId, reason: 'ended' });
+                io.to(call.calleeSocket).emit('call_ended', { callId, reason: 'ended' });
+                calls.delete(callId);
+            }
+        }
+    });
+});
+
+connectDB().then(() => {
+    server.listen(PORT, () => console.log('Servidor volterIP escuchando en http://localhost:' + PORT));
+});

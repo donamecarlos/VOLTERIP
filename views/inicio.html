@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>volterIP</title>
+    <style>
+        :root {
+            --white: #FFFFFF;
+            --green-dark: #1B590F;
+            --green: #287D14;
+            --black: #1A1A1A;
+            --gray-100: #F7FAF8;
+            --gray-200: #E8EDEB;
+            --gray-300: #CFDBD5;
+            --gray-400: #8AA08E;
+            --steel: #5B8FB9;
+            --red: #D0342C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Source Sans Pro', Arial, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--white);
+            color: var(--black);
+            min-height: 100vh;
+        }
+
+        ::selection {
+            background: rgba(40, 125, 20, .2);
+        }
+
+        /* ================= BARRA SUPERIOR ================= */
+        .topbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 32px;
+            background: rgba(255, 255, 255, .92);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .brand-logo {
+            width: 38px;
+            height: 38px;
+            border-radius: 9px;
+            background: var(--green-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 16px rgba(27, 89, 15, .28);
+        }
+
+        .brand-name {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--green-dark);
+            letter-spacing: -0.3px;
+        }
+
+        .brand-name span {
+            color: var(--green);
+        }
+
+        .connection-pill {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-400);
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            padding: 7px 14px;
+            border-radius: 20px;
+            transition: all .3s ease;
+            white-space: nowrap;
+        }
+
+        .connection-pill .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--gray-300);
+            transition: background .3s ease;
+        }
+
+        .connection-pill.online {
+            color: var(--green-dark);
+        }
+
+        .connection-pill.online .dot {
+            background: var(--green);
+            box-shadow: 0 0 0 0 rgba(40, 125, 20, .4);
+            animation: pulse 2s infinite;
+        }
+
+        .connection-pill.offline {
+            color: var(--red);
+            border-color: #F5C6C2;
+            background: #FDE8E8;
+        }
+
+        .connection-pill.offline .dot {
+            background: var(--red);
+            box-shadow: 0 0 0 0 rgba(208, 52, 44, .4);
+            animation: pulseRed 2s infinite;
+        }
+
+        @keyframes pulseRed {
+            0% { box-shadow: 0 0 0 0 rgba(208, 52, 44, .4); }
+            70% { box-shadow: 0 0 0 8px rgba(208, 52, 44, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(208, 52, 44, 0); }
+        }
+
+        .logout-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            border: 1px solid var(--gray-300);
+            color: var(--gray-400);
+            background: var(--white);
+            transition: all .25s ease;
+        }
+
+        .logout-btn:hover {
+            color: var(--red);
+            border-color: var(--red);
+            background: #FDE8E8;
+            transform: translateY(-1px);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(40, 125, 20, .4); }
+            70% { box-shadow: 0 0 0 8px rgba(40, 125, 20, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(40, 125, 20, 0); }
+        }
+
+        /* ================= MENÚ DESPLEGABLE ================= */
+        .menu-wrap {
+            position: relative;
+        }
+
+        .menu-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 18px;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--black);
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all .25s ease;
+        }
+
+        .menu-btn:hover {
+            border-color: var(--green);
+            background: var(--gray-100);
+            transform: translateY(-1px);
+        }
+
+        .menu-btn:active {
+            transform: scale(.97);
+        }
+
+        .menu-btn .chevron {
+            transition: transform .3s ease;
+        }
+
+        .menu-wrap.open .menu-btn {
+            border-color: var(--green);
+            background: var(--green-dark);
+            color: var(--white);
+            box-shadow: 0 8px 20px rgba(27, 89, 15, .3);
+        }
+
+        .menu-wrap.open .menu-btn .chevron {
+            transform: rotate(180deg);
+        }
+
+        .dropdown {
+            position: absolute;
+            right: 0;
+            top: calc(100% + 10px);
+            min-width: 280px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 14px;
+            box-shadow: 0 16px 48px rgba(26, 26, 26, .14);
+            padding: 8px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-8px) scale(.98);
+            transition: opacity .28s ease, transform .28s ease, visibility .28s;
+            transform-origin: top right;
+        }
+
+        .dropdown.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+
+        .drop-head {
+            padding: 10px 14px 8px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+            color: var(--gray-400);
+        }
+
+        .drop-item {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            margin: 2px 0;
+            border: none;
+            border-radius: 10px;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--black);
+            cursor: pointer;
+            text-align: left;
+            transition: background .2s ease, transform .2s ease;
+        }
+
+        .drop-item:hover {
+            background: var(--gray-100);
+            transform: translateX(3px);
+        }
+
+        .drop-item .ico {
+            color: var(--green);
+            display: flex;
+            transition: transform .3s ease;
+        }
+
+        .drop-item:hover .ico {
+            transform: scale(1.15);
+        }
+
+        .drop-item.arr {
+            border-top: 1px solid var(--gray-200);
+            margin-top: 6px;
+            padding-top: 12px;
+        }
+
+        /* Formulario del servidor que se despliega */
+        .server-panel {
+            overflow: hidden;
+            max-height: 0;
+            opacity: 0;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: 10px;
+            margin: 4px 4px 6px;
+            transform: translateY(-6px);
+            transition: max-height .45s ease, opacity .35s ease, transform .35s ease;
+        }
+
+        .server-panel.open {
+            max-height: 220px;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .server-panel-inner {
+            padding: 16px;
+        }
+
+        .server-panel-inner label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--green-dark);
+            margin-bottom: 8px;
+        }
+
+        .server-panel-inner input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--gray-300);
+            border-radius: 9px;
+            font-size: 14px;
+            color: var(--black);
+            background: var(--white);
+            outline: none;
+            transition: border-color .25s ease, box-shadow .25s ease;
+        }
+
+        .server-panel-inner input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 4px rgba(40, 125, 20, .15);
+        }
+
+        .server-panel-inner .btn-connect {
+            width: 100%;
+            margin-top: 10px;
+            padding: 11px 14px;
+            border: none;
+            border-radius: 9px;
+            background: var(--green);
+            color: var(--white);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .25s ease, transform .2s ease, box-shadow .25s ease;
+        }
+
+        .server-panel-inner .btn-connect:hover {
+            background: var(--green-dark);
+            box-shadow: 0 8px 20px rgba(27, 89, 15, .3);
+            transform: translateY(-1px);
+        }
+
+        .server-panel-inner .btn-connect:active {
+            transform: scale(.97);
+        }
+
+        .server-ok {
+            display: none;
+            padding: 12px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--green-dark);
+            background: #E5F2E0;
+            border: 1px solid #CBE4C5;
+            border-radius: 9px;
+        }
+
+        .server-ok.show {
+            display: block;
+            animation: fadeSlide .35s ease;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ================= CONTENIDO ================= */
+        .page {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 48px 32px 72px;
+        }
+
+        .page-title {
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--green-dark);
+            margin-bottom: 6px;
+        }
+
+        .page-title small {
+            display: block;
+            font-size: 14px;
+            font-weight: 400;
+            color: var(--gray-400);
+            margin-top: 4px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            margin-top: 32px;
+        }
+
+        .card {
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: 0 1px 2px rgba(26, 26, 26, .04);
+            transition: transform .3s ease, box-shadow .3s ease;
+            scroll-margin-top: 96px;
+        }
+
+        .card:hover {
+            box-shadow: 0 18px 44px rgba(27, 89, 15, .1);
+            transform: translateY(-3px);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            color: var(--green-dark);
+            margin-bottom: 22px;
+        }
+
+        .card-title .ico {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--green);
+        }
+
+        /* ---------- Marcador ---------- */
+        .dialer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .dialer-display {
+            width: 100%;
+            max-width: 330px;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: 14px;
+            padding: 18px 20px;
+            margin-bottom: 24px;
+            min-height: 76px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-end;
+            border-bottom: 3px solid var(--green);
+            transition: border-color .3s ease, box-shadow .3s ease;
+        }
+
+        .dialer-display:focus-within {
+            border-color: var(--green);
+            box-shadow: 0 0 0 4px rgba(40, 125, 20, .12);
+        }
+
+        .dialer-display .call-id {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            min-height: 32px;
+            color: var(--black);
+        }
+
+        .dialer-display .call-timer {
+            display: none;
+            font-size: 30px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--green);
+            font-variant-numeric: tabular-nums;
+            min-height: 38px;
+        }
+
+        .dialer-display.calling .call-timer {
+            display: block;
+            animation: fadeSlide .35s ease;
+        }
+
+        .dialer-display .call-status {
+            font-size: 12px;
+            color: var(--gray-400);
+            font-weight: 500;
+            transition: color .3s ease;
+        }
+
+        .dialer-display.calling .call-status {
+            color: var(--green);
+            animation: blink 1.2s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: .35; }
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 86px);
+            gap: 14px;
+            margin-bottom: 26px;
+        }
+
+        .key {
+            height: 62px;
+            border-radius: 12px;
+            border: 1px solid var(--gray-300);
+            background: var(--white);
+            color: var(--black);
+            font-size: 21px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .22s ease;
+        }
+
+        .key:hover {
+            border-color: var(--green);
+            background: var(--gray-100);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(40, 125, 20, .15);
+        }
+
+        .key:active {
+            transform: scale(.93) translateY(0);
+        }
+
+        .key .sub {
+            display: block;
+            font-size: 9px;
+            font-weight: 400;
+            letter-spacing: 1px;
+            color: var(--gray-400);
+            text-transform: uppercase;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .round-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            transition: transform .2s ease;
+        }
+
+        .round-btn:active {
+            transform: scale(.92);
+        }
+
+        .round-btn .ring {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            transition: all .3s ease;
+        }
+
+        .round-btn .label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            color: var(--gray-400);
+        }
+
+        .btn-call .ring {
+            background: var(--green);
+            box-shadow: 0 0 0 0 rgba(40, 125, 20, .45);
+            animation: pulse 2.4s infinite;
+        }
+
+        .btn-call:hover .ring {
+            background: var(--green-dark);
+            transform: scale(1.06);
+        }
+
+        .btn-hangup .ring {
+            background: var(--red);
+        }
+
+        .btn-hangup:hover .ring {
+            background: #A82620;
+            transform: scale(1.06);
+        }
+
+        .btn-del .ring {
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            color: var(--black);
+        }
+
+        .btn-del:hover .ring {
+            border-color: var(--red);
+            color: var(--red);
+            transform: scale(1.06);
+        }
+
+        .btn-mute .ring {
+            background: var(--white);
+            border: 1px solid var(--gray-300);
+            color: var(--green-dark);
+        }
+
+        .btn-mute:hover .ring {
+            border-color: var(--green);
+            background: var(--gray-100);
+            transform: scale(1.06);
+        }
+
+        .btn-mute.muted .ring {
+            background: var(--red);
+            border-color: var(--red);
+            color: var(--white);
+        }
+
+        .btn-mute.muted:hover .ring {
+            background: #A82620;
+        }
+
+        /* ---------- Historial ---------- */
+        .history {
+            display: flex;
+            flex-direction: column;
+            min-height: 480px;
+        }
+
+        .history-list {
+            list-style: none;
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .history-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background: var(--gray-300);
+            border-radius: 4px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 12px;
+            border-radius: 12px;
+            border-bottom: 1px solid var(--gray-200);
+            transition: all .25s ease;
+        }
+
+        .history-item:hover {
+            background: var(--gray-100);
+            transform: translateX(3px);
+        }
+
+        .history-ico {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: transform .3s ease;
+        }
+
+        .history-item:hover .history-ico {
+            transform: rotate(-6deg) scale(1.05);
+        }
+
+        .history-ico.out {
+            background: #E5F2E0;
+            color: var(--green);
+        }
+
+        .history-ico.in {
+            background: #E8F1FA;
+            color: var(--steel);
+        }
+
+        .history-ico.missed {
+            background: #FDE8E8;
+            color: var(--red);
+        }
+
+        .history-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .history-number {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--black);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-meta {
+            font-size: 13px;
+            color: var(--gray-400);
+        }
+
+        .history-time {
+            font-size: 12px;
+            color: var(--green-dark);
+            font-weight: 600;
+            white-space: nowrap;
+            transition: color .3s ease;
+        }
+
+        .history-item:hover .history-time {
+            color: var(--green);
+        }
+
+        .btn-callback {
+            background: transparent;
+            color: var(--green);
+            border: 1px solid var(--gray-300);
+            border-radius: 9px;
+            padding: 8px 14px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .25s ease;
+            white-space: nowrap;
+        }
+
+        .btn-callback:hover {
+            background: var(--green);
+            border-color: var(--green);
+            color: var(--white);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(40, 125, 20, .25);
+        }
+
+        .history-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray-400);
+        }
+
+        .history-empty .big {
+            display: block;
+            margin-bottom: 12px;
+            color: var(--gray-300);
+        }
+
+        /* ---------- Llamada entrante ---------- */
+        .incoming-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            background: rgba(26, 26, 26, .45);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity .3s ease;
+        }
+
+        .incoming-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .incoming-card {
+            width: min(92vw, 360px);
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 24px 70px rgba(26, 26, 26, .3);
+            padding: 30px 28px 24px;
+            text-align: center;
+            transform: translateY(24px) scale(.95);
+            transition: transform .35s ease;
+        }
+
+        .incoming-overlay.show .incoming-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .incoming-card .pulse-ring {
+            width: 88px;
+            height: 88px;
+            margin: 0 auto 18px;
+            border-radius: 50%;
+            background: var(--green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            animation: pulse 1.6s infinite;
+        }
+
+        .incoming-card h3 {
+            font-size: 20px;
+            color: var(--black);
+            margin-bottom: 4px;
+        }
+
+        .incoming-card .from {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--green-dark);
+            margin-bottom: 6px;
+        }
+
+        .incoming-card .meta {
+            font-size: 13px;
+            color: var(--gray-400);
+            margin-bottom: 24px;
+        }
+
+        .incoming-actions {
+            display: flex;
+            gap: 14px;
+        }
+
+        .incoming-actions .round-btn .ring {
+            width: 64px;
+            height: 64px;
+        }
+
+        .btn-answer .ring {
+            background: var(--green);
+        }
+
+        .btn-answer:hover .ring {
+            background: var(--green-dark);
+            transform: scale(1.06);
+        }
+
+        .btn-reject .ring {
+            background: var(--red);
+        }
+
+        .btn-reject:hover .ring {
+            background: #A82620;
+            transform: scale(1.06);
+        }
+
+        @media (max-width: 860px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .connection-pill {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Barra superior con menú desplegable -->
+    <header class="topbar">
+        <a class="brand" href="#">
+            <span class="brand-logo">
+                <svg width="20" height="16" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2 L14 9 C14.5 10.5 12 11 12 13 C12 11 9.5 10.5 10 9 Z" fill="#FFFFFF"/>
+                </svg>
+            </span>
+            <span class="brand-name">volter<span>IP</span></span>
+        </a>
+
+        <span class="connection-pill" id="connPill">
+            <span class="dot"></span>
+            <span id="connText">Sin conexión</span>
+        </span>
+
+        <a class="logout-btn" href="login.html" title="Cerrar sesión">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+        </a>
+
+        <div class="menu-wrap" id="menuWrap">
+            <button class="menu-btn" id="menuBtn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+                <span>Menú</span>
+                <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 12 15 18 9"/>
+                </svg>
+            </button>
+
+            <div class="dropdown" id="dropdown">
+                <div class="drop-head">Navegación</div>
+                <button class="drop-item" data-scroll="dialerCard">
+                    <span class="ico">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                    </span>
+                    Marcador
+                </button>
+                <button class="drop-item" data-scroll="historyCard">
+                    <span class="ico">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </span>
+                    Historial de llamadas
+                </button>
+
+                <div class="drop-head">Conexión</div>
+                <button class="drop-item" id="serverItem">
+                    <span class="ico">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="8" rx="2"/>
+                            <rect x="2" y="14" width="20" height="8" rx="2"/>
+                            <line x1="6" y1="6" x2="6.01" y2="6"/>
+                            <line x1="6" y1="18" x2="6.01" y2="18"/>
+                        </svg>
+                    </span>
+                    Servidor
+                </button>
+
+                <!-- Div de conexión que se despliega -->
+                <div class="server-panel" id="serverPanel">
+                    <div class="server-panel-inner">
+                        <label for="serverInput">Dirección IP o URL del servidor</label>
+                        <input type="text" id="serverInput" placeholder="ej. 192.168.1.10 o sip.miempresa.com">
+                        <button class="btn-connect" onclick="connect()">Conectar</button>
+                        <div class="server-ok" id="serverOk">
+                            Conectando a <span id="serverIp">...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="page">
+        <h1 class="page-title">
+            Panel de usuario
+            <small>Softphone de volterIP · llamadas sobre IP por internet</small>
+        </h1>
+
+        <div class="grid">
+            <!-- Marcador de números -->
+            <section class="card" id="dialerCard">
+                <div class="card-title">
+                    <span class="ico">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                    </span>
+                    Marcador
+                </div>
+
+                <div class="dialer">
+                    <div class="dialer-display" id="display">
+                        <span class="call-id" id="numberDisplay"></span>
+                        <span class="call-timer" id="callTimer" title="Duración de la llamada">00:00:00</span>
+                        <span class="call-status" id="callStatus">Listo para marcar</span>
+                    </div>
+
+                    <div class="keypad">
+                        <button class="key" onclick="addDigit('1')">1</button>
+                        <button class="key" onclick="addDigit('2')">2<span class="sub">ABC</span></button>
+                        <button class="key" onclick="addDigit('3')">3<span class="sub">DEF</span></button>
+                        <button class="key" onclick="addDigit('4')">4<span class="sub">GHI</span></button>
+                        <button class="key" onclick="addDigit('5')">5<span class="sub">JKL</span></button>
+                        <button class="key" onclick="addDigit('6')">6<span class="sub">MNO</span></button>
+                        <button class="key" onclick="addDigit('7')">7<span class="sub">PQRS</span></button>
+                        <button class="key" onclick="addDigit('8')">8<span class="sub">TUV</span></button>
+                        <button class="key" onclick="addDigit('9')">9<span class="sub">WXYZ</span></button>
+                        <button class="key" onclick="addDigit('*')">*</button>
+                        <button class="key" onclick="addDigit('0')">0<span class="sub">+</span></button>
+                        <button class="key" onclick="addDigit('#')">#</button>
+                    </div>
+
+                    <div class="controls">
+                        <button class="round-btn btn-del" onclick="deleteDigit()">
+                            <span class="ring">
+                                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/>
+                                    <line x1="18" y1="9" x2="12" y2="15"/>
+                                    <line x1="12" y1="9" x2="18" y2="15"/>
+                                </svg>
+                            </span>
+                            <span class="label">Borrar</span>
+                        </button>
+
+                        <button class="round-btn btn-mute" id="btnMute" onclick="toggleMute()" title="Silenciar micrófono">
+                            <span class="ring">
+                                <svg id="micOnIco" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                                    <line x1="12" y1="19" x2="12" y2="22"/>
+                                </svg>
+                                <svg id="micOffIco" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                    <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V5a3 3 0 0 0-5.94-.6"/>
+                                    <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2c0 .86-.16 1.69-.43 2.45"/>
+                                    <line x1="12" y1="19" x2="12" y2="22"/>
+                                </svg>
+                            </span>
+                            <span class="label">Silenciar</span>
+                        </button>
+
+                        <button class="round-btn btn-call" onclick="call()">
+                            <span class="ring">
+                                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                </svg>
+                            </span>
+                            <span class="label">Llamar</span>
+                        </button>
+
+                        <button class="round-btn btn-hangup" onclick="hangup()">
+                            <span class="ring">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M10.25 17.44a2 2 0 0 1 0-2.88l1.2-1.2a2 2 0 0 1 2.83 0l3.9 3.9a2 2 0 0 1-.07 2.89l-1.5 1.37a2 2 0 0 1-2.45.18c-3.9-2.63-6.3-5.14-8.11-8.11a2 2 0 0 1 .18-2.45l1.37-1.5a2 2 0 0 1 2.9-.07l3.89 3.9a2 2 0 0 1 0 2.83z"/>
+                                </svg>
+                            </span>
+                            <span class="label">Colgar</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Historial de llamadas -->
+            <section class="card history" id="historyCard">
+                <div class="card-title">
+                    <span class="ico">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </span>
+                    Historial de llamadas
+                </div>
+
+                <ul class="history-list" id="historyList">
+
+                    <li class="history-item">
+                        <div class="history-ico out">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+                            </svg>
+                        </div>
+                        <div class="history-info">
+                            <div class="history-number">(555) 123-4567</div>
+                            <div class="history-meta">Saliente · 02:45 min</div>
+                        </div>
+                        <button class="btn-callback" onclick="redial('(555) 123-4567')">Llamar</button>
+                        <span class="history-time">Hoy 09:12</span>
+                    </li>
+
+                    <li class="history-item">
+                        <div class="history-ico in">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="17" y1="7" x2="7" y2="17"/><polyline points="17 17 7 17 7 7"/>
+                            </svg>
+                        </div>
+                        <div class="history-info">
+                            <div class="history-number">(555) 987-1234</div>
+                            <div class="history-meta">Entrante · 01:08 min</div>
+                        </div>
+                        <button class="btn-callback" onclick="redial('(555) 987-1234')">Llamar</button>
+                        <span class="history-time">Hoy 08:40</span>
+                    </li>
+
+                    <li class="history-item">
+                        <div class="history-ico missed">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                                <line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>
+                            </svg>
+                        </div>
+                        <div class="history-info">
+                            <div class="history-number">(555) 555-0199</div>
+                            <div class="history-meta">Perdida</div>
+                        </div>
+                        <button class="btn-callback" onclick="redial('(555) 555-0199')">Llamar</button>
+                        <span class="history-time">Ayer 18:25</span>
+                    </li>
+
+                    <li class="history-item">
+                        <div class="history-ico out">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>
+                            </svg>
+                        </div>
+                        <div class="history-info">
+                            <div class="history-number">(555) 314-1592</div>
+                            <div class="history-meta">Saliente · 00:37 min</div>
+                        </div>
+                        <button class="btn-callback" onclick="redial('(555) 314-1592')">Llamar</button>
+                        <span class="history-time">Ayer 15:02</span>
+                    </li>
+
+                    <li class="history-item">
+                        <div class="history-ico in">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="17" y1="7" x2="7" y2="17"/><polyline points="17 17 7 17 7 7"/>
+                            </svg>
+                        </div>
+                        <div class="history-info">
+                            <div class="history-number">(555) 271-8281</div>
+                            <div class="history-meta">Entrante · 03:14 min</div>
+                        </div>
+                        <button class="btn-callback" onclick="redial('(555) 271-8281')">Llamar</button>
+                        <span class="history-time">Lun 11:47</span>
+                    </li>
+
+                </ul>
+            </section>
+        </div>
+    </main>
+
+    <!-- Notificación de llamada entrante -->
+    <div class="incoming-overlay" id="incomingOverlay">
+        <div class="incoming-card">
+            <div class="pulse-ring">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
+                </svg>
+            </div>
+            <div class="meta">Llamada entrante de</div>
+            <div class="from" id="incomingFrom">1001</div>
+            <div class="meta" id="incomingName"></div>
+            <div class="incoming-actions">
+                <button class="round-btn btn-reject" onclick="rejectCall()">
+                    <span class="ring">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10.25 17.44a2 2 0 0 1 0-2.88l1.2-1.2a2 2 0 0 1 2.83 0l3.9 3.9a2 2 0 0 1-.07 2.89l-1.5 1.37a2 2 0 0 1-2.45.18c-3.9-2.63-6.3-5.14-8.11-8.11a2 2 0 0 1 .18-2.45l1.37-1.5a2 2 0 0 1 2.9-.07l3.89 3.9a2 2 0 0 1 0 2.83z"/>
+                        </svg>
+                    </span>
+                    <span class="label">Rechazar</span>
+                </button>
+                <button class="round-btn btn-answer" onclick="answerCall()">
+                    <span class="ring">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
+                        </svg>
+                    </span>
+                    <span class="label">Responder</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audios -->
+    <audio id="ringtone" src="/sounds/llamada_entrante.mp3" loop preload="auto"></audio>
+    <audio id="noAnswerSnd" src="/sounds/no_contesta.mp3" preload="auto"></audio>
+    <audio id="offlineSnd" src="/sounds/no_en_linea.mp3" preload="auto"></audio>
+    <audio id="remoteAudio" autoplay preload="auto"></audio>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        let numero = '';
+
+        // ---------- Usuario conectado ----------
+        const sessionUser = JSON.parse(sessionStorage.getItem('volterip_user') || 'null');
+        if (sessionUser) {
+            const sub = document.querySelector('.page-title small');
+            sub.textContent = 'Hola, ' + sessionUser.name + ' · extensión ' + (sessionUser.extension || sessionUser.username) + ' · ' + (sessionUser.email || '') + ' · softphone volterIP';
+        }
+
+        document.querySelector('.logout-btn').addEventListener('click', () => sessionStorage.removeItem('volterip_user'));
+
+        // ---------- Menú desplegable ----------
+        const menuWrap = document.getElementById('menuWrap');
+        const dropdown = document.getElementById('dropdown');
+        const serverItem = document.getElementById('serverItem');
+        const serverPanel = document.getElementById('serverPanel');
+
+        document.getElementById('menuBtn').addEventListener('click', () => {
+            menuWrap.classList.toggle('open');
+            dropdown.classList.toggle('open');
+        });
+
+        serverItem.addEventListener('click', () => {
+            serverPanel.classList.toggle('open');
+            serverItem.classList.toggle('active', serverPanel.classList.contains('open'));
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!menuWrap.contains(e.target)) {
+                menuWrap.classList.remove('open');
+                dropdown.classList.remove('open');
+            }
+            if (!serverPanel.contains(e.target) && !serverItem.contains(e.target)) {
+                serverPanel.classList.remove('open');
+            }
+        });
+
+        document.querySelectorAll('.drop-item[data-scroll]').forEach(item => {
+            item.addEventListener('click', () => {
+                menuWrap.classList.remove('open');
+                dropdown.classList.remove('open');
+                const target = document.getElementById(item.dataset.scroll);
+                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        });
+
+        // ---------- Socket.IO · presencia y teléfono ----------
+        const myExt = (sessionUser && (sessionUser.extension || sessionUser.username)) || '';
+        const socket = io();
+        const connPill = document.getElementById('connPill');
+        const connText = document.getElementById('connText');
+
+        function setConnState(state) {
+            connPill.classList.remove('online', 'offline');
+            if (state === 'online') {
+                connPill.classList.add('online');
+                connText.textContent = 'En línea';
+            } else {
+                connPill.classList.add('offline');
+                connText.textContent = 'Sin conexión';
+            }
+        }
+
+        socket.on('connect', () => {
+            setConnState('online');
+            socket.emit('register', { extension: myExt, name: sessionUser ? sessionUser.name : '' });
+        });
+        socket.on('disconnect', () => setConnState('offline'));
+        socket.on('connect_error', () => setConnState('offline'));
+
+        // ---------- Sonidos ----------
+        const ringtone = document.getElementById('ringtone');
+        const noAnswerSnd = document.getElementById('noAnswerSnd');
+        const offlineSnd = document.getElementById('offlineSnd');
+
+        function stopSounds() {
+            [ringtone, noAnswerSnd, offlineSnd].forEach(a => { a.pause(); a.currentTime = 0; });
+        }
+
+        function playSound(el) {
+            if (!el) return;
+            el.pause();
+            el.currentTime = 0;
+            el.play().catch(() => {});
+        }
+
+        // ---------- Notificación push del navegador ----------
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+        function pushNotify(title, body) {
+            if (!('Notification' in window) || Notification.permission !== 'granted') return;
+            new Notification(title, { body });
+        }
+
+        // ---------- WebRTC · audio de la llamada ----------
+        const RTC_CONFIG = {
+            iceServers: [
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' }
+            ]
+        };
+        const pcs = new Map();          // callId -> RTCPeerConnection
+        const remoteAudio = document.getElementById('remoteAudio');
+        let localStream = null;
+        let muted = false;
+        const micOnIco = document.getElementById('micOnIco');
+        const micOffIco = document.getElementById('micOffIco');
+        const btnMute2 = document.getElementById('btnMute');
+
+        async function getLocalMedia() {
+            if (localStream) return localStream;
+            localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            return localStream;
+        }
+
+        function peerFor(cid) {
+            if (!pcs.has(cid)) {
+                const p = new RTCPeerConnection(RTC_CONFIG);
+                p.onicecandidate = (e) => {
+                    if (e.candidate) socket.emit('rtc_ice', { callId: cid, candidate: e.candidate });
+                };
+                p.ontrack = (e) => {
+                    remoteAudio.srcObject = e.streams[0];
+                    remoteAudio.play().catch(() => {});
+                    const label = callRole === 'callee' ? 'hablando con extensión ' : 'en llamada con extensión ';
+                    setStatus('Audio activo · ' + label, true);
+                };
+                pcs.set(cid, p);
+            }
+            return pcs.get(cid);
+        }
+
+        async function ensureLocalTracks(p) {
+            const stream = await getLocalMedia();
+            for (const t of stream.getAudioTracks()) {
+                if (!p.getSenders().some(s => s.track === t)) p.addTrack(t, stream);
+            }
+            return stream;
+        }
+
+        async function startMediaFlow(cid) {
+            const p = peerFor(cid);
+            try {
+                await ensureLocalTracks(p);
+            } catch (err) {
+                setStatus('No se pudo acceder al micrófono. Solo recibirás audio.', false);
+            }
+            return p;
+        }
+
+        function closePeerFor(cid) {
+            if (localStream) { localStream.getTracks().forEach(t => t.stop()); localStream = null; }
+            const p = pcs.get(cid);
+            if (p) {
+                p.onicecandidate = null;
+                p.ontrack = null;
+                p.close();
+                pcs.delete(cid);
+            }
+            remoteAudio.srcObject = null;
+            if (muted) toggleMute();
+        }
+
+        function toggleMute() {
+            muted = !muted;
+            btnMute2.classList.toggle('muted', muted);
+            micOnIco.style.display = muted ? 'none' : '';
+            micOffIco.style.display = muted ? '' : 'none';
+            if (localStream) localStream.getAudioTracks().forEach(t => t.enabled = !muted);
+        }
+
+        // ---------- Conexión al servidor SIP ----------
+        function connect() {
+            const ip = document.getElementById('serverInput').value.trim();
+            const okBox = document.getElementById('serverOk');
+            const ipLabel = document.getElementById('serverIp');
+            const btn = document.querySelector('.btn-connect');
+
+            const destino = ip || 'servidor volterIP';
+            ipLabel.textContent = destino;
+
+            btn.textContent = 'Conectando...';
+            btn.disabled = true;
+
+            setTimeout(() => {
+                okBox.classList.add('show');
+                btn.style.display = 'none';
+                document.getElementById('serverInput').style.display = 'none';
+                document.querySelector('.server-panel-inner label').style.display = 'none';
+            }, 800);
+        }
+
+        // ---------- Estado de la llamada ----------
+        let callSeconds = 0;
+        let callTimerId = null;
+        let lastCallDuration = '';
+        let activeHistoryItem = null;
+        let callId = null;          // id de la llamada activa (timbrando o en curso)
+        let incomingCallId = null;  // id de la llamada entrante
+        let callRole = null;        // 'caller' | 'callee'
+        const timerEl = document.getElementById('callTimer');
+
+        function formatDuration(secs) {
+            const h = Math.floor(secs / 3600).toString().padStart(2, '0');
+            const m = Math.floor((secs % 3600) / 60).toString().padStart(2, '0');
+            const s = Math.floor(secs % 60).toString().padStart(2, '0');
+            return h + ':' + m + ':' + s;
+        }
+
+        function startTimer() {
+            callSeconds = 0;
+            if (callTimerId) clearInterval(callTimerId);
+            timerEl.textContent = formatDuration(0);
+            callTimerId = setInterval(() => {
+                callSeconds++;
+                timerEl.textContent = formatDuration(callSeconds);
+            }, 1000);
+        }
+
+        function stopTimer() {
+            lastCallDuration = formatDuration(callSeconds);
+            if (callTimerId) clearInterval(callTimerId);
+            callTimerId = null;
+            callSeconds = 0;
+        }
+
+        function resetDialer() {
+            numero = '';
+            document.getElementById('numberDisplay').textContent = '';
+            timerEl.textContent = '00:00:00';
+        }
+
+        function finalizeHistory(meta) {
+            if (activeHistoryItem) {
+                const el = activeHistoryItem.querySelector('.history-meta');
+                if (el && meta) el.textContent = meta;
+                activeHistoryItem = null;
+            }
+        }
+
+        function addDigit(d) {
+            numero += d;
+            document.getElementById('numberDisplay').textContent = numero;
+        }
+
+        function deleteDigit() {
+            numero = numero.slice(0, -1);
+            document.getElementById('numberDisplay').textContent = numero;
+        }
+
+        function setStatus(text, calling) {
+            const status = document.getElementById('callStatus');
+            const display = document.getElementById('display');
+            status.textContent = text;
+            display.classList.toggle('calling', calling);
+        }
+
+        // ---------- LLAMADA SALIENTE ----------
+        function call() {
+            if (!numero || callId || incomingCallId) return;
+            if (!socket.connected) {
+                setStatus('Sin conexión con el servidor', false);
+                return;
+            }
+            const dest = numero.replace(/[^0-9+*#]/g, '');
+            if (!dest) return;
+            setStatus('Llamando a ' + dest + '...', true);
+            callRole = 'caller';
+            activeHistoryItem = addHistory(dest, 'out', false);
+            socket.emit('call', dest);
+        }
+
+        socket.on('call_result', (data) => {
+            if (!data.ok && data.reason === 'offline') {
+                stopTimer();
+                callRole = null;
+                playSound(offlineSnd); // no_en_linea.mp3
+                setStatus('El usuario ' + data.dest + ' no está en línea', false);
+                finalizeHistory('No en línea');
+                resetDialer();
+            }
+        });
+
+        socket.on('call_accepted', async (data) => {
+            callId = data.callId;
+            callRole = 'caller';
+            setStatus('Estableciendo audio con ' + data.with + '...', true);
+            startTimer();
+            const p = await startMediaFlow(data.callId);
+            setTimeout(async () => {
+                try {
+                    const offer = await p.createOffer();
+                    await p.setLocalDescription(offer);
+                    socket.emit('rtc_offer', { callId: data.callId, sdp: p.localDescription });
+                } catch (err) { console.error('Error creando oferta:', err); }
+            }, 300);
+        });
+
+        // ---------- LLAMADA ENTRANTE ----------
+        socket.on('incoming_call', (data) => {
+            incomingCallId = data.callId;
+            document.getElementById('incomingFrom').textContent = data.from;
+            document.getElementById('incomingName').textContent = data.fromName ? 'de ' + data.fromName : '';
+            document.getElementById('incomingOverlay').classList.add('show');
+            playSound(ringtone); // llamada_entrante.mp3 (loop)
+            pushNotify('Llamada entrante', 'Extensión ' + data.from + ' te está llamando.');
+        });
+
+        function answerCall() {
+            if (!incomingCallId) return;
+            socket.emit('answer', { callId: incomingCallId });
+            document.getElementById('incomingOverlay').classList.remove('show');
+            stopSounds();
+            incomingCallId = null;
+        }
+
+        function rejectCall() {
+            if (incomingCallId) socket.emit('reject', { callId: incomingCallId });
+            document.getElementById('incomingOverlay').classList.remove('show');
+            stopSounds();
+            incomingCallId = null;
+        }
+
+        socket.on('incoming_stop', (data) => {
+            document.getElementById('incomingOverlay').classList.remove('show');
+            stopSounds();
+            if (incomingCallId) {
+                addHistory(data.from, 'in', true); // llamada perdida
+                incomingCallId = null;
+            }
+        });
+
+        socket.on('call_connected', (data) => {
+            callId = data.callId;
+            callRole = 'callee';
+            setStatus('Estableciendo audio con ' + data.with + '...', true);
+            startTimer();
+            activeHistoryItem = addHistory(data.with, 'in', false);
+            startMediaFlow(data.callId);
+        });
+
+        // ---------- Señalización WebRTC ----------
+        socket.on('rtc_offer', async (data) => {
+            const p = peerFor(data.callId);
+            try {
+                await ensureLocalTracks(p);
+                await p.setRemoteDescription(data.sdp);
+                const answer = await p.createAnswer();
+                await p.setLocalDescription(answer);
+                socket.emit('rtc_answer', { callId: data.callId, sdp: p.localDescription });
+            } catch (err) { console.error('Error en rtc_offer:', err); }
+        });
+
+        socket.on('rtc_answer', (data) => {
+            const p = pcs.get(data.callId);
+            if (p) p.setRemoteDescription(data.sdp).catch(e => console.error('rtc_answer', e));
+        });
+
+        socket.on('rtc_ice', (data) => {
+            const p = pcs.get(data.callId);
+            if (p && data.candidate) p.addIceCandidate(data.candidate).catch(e => console.error('rtc_ice', e));
+        });
+
+        // ---------- FIN DE LLAMADA ----------
+        socket.on('call_ended', (data) => {
+            // El llamante colgó mientras sonaba el timbre
+            if (incomingCallId === data.callId) {
+                document.getElementById('incomingOverlay').classList.remove('show');
+                stopSounds();
+                addHistory(data.callId.split(':')[0], 'in', true); // llamada perdida
+                incomingCallId = null;
+                return;
+            }
+            closePeerFor(data.callId);
+            stopTimer();
+            const label = callRole === 'callee' ? 'Entrante' : 'Saliente';
+            if (data.reason === 'no_answer') {
+                playSound(noAnswerSnd); // no_contesta.mp3
+                setStatus('No contestó (' + data.callId.split(':')[1] + ')', false);
+                finalizeHistory('No contestó');
+            } else if (data.reason === 'rejected') {
+                setStatus('Llamada rechazada', false);
+                finalizeHistory('Rechazada');
+            } else {
+                setStatus('Llamada finalizada · ' + lastCallDuration, false);
+                finalizeHistory(label + ' · ' + lastCallDuration + ' min');
+            }
+            if (callId === data.callId) callId = null;
+            callRole = null;
+            resetDialer();
+            setTimeout(() => setStatus('Listo para marcar', false), 3200);
+        });
+
+        function hangup() {
+            if (incomingCallId) {
+                rejectCall();
+                return;
+            }
+            if (callId) socket.emit('end_call', { callId });
+            closePeerFor(callId);
+            stopTimer();
+            const label = callRole === 'callee' ? 'Entrante' : 'Saliente';
+            setStatus('Llamada finalizada · ' + lastCallDuration, false);
+            finalizeHistory(label + ' · ' + lastCallDuration + ' min');
+            callId = null;
+            callRole = null;
+            resetDialer();
+            setTimeout(() => setStatus('Listo para marcar', false), 3200);
+        }
+
+        function redial(n) {
+            numero = n.replace(/[^0-9+*#]/g, '');
+            document.getElementById('numberDisplay').textContent = numero;
+            call();
+        }
+
+        function addHistory(number, type, missed) {
+            const list = document.getElementById('historyList');
+            const item = document.createElement('li');
+            item.className = 'history-item';
+            const now = new Date();
+            const hm = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+            const cls = missed ? 'missed' : (type === 'in' ? 'in' : 'out');
+            const meta = missed ? 'Perdida' : (type === 'in' ? 'Entrante' : 'Saliente') + ' · 00:00:00 min';
+            const arrowOut = '<line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/>';
+            const arrowIn = '<line x1="17" y1="7" x2="7" y2="17"/><polyline points="17 17 7 17 7 7"/>';
+            const crossMissed = '<line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>';
+            const glyph = missed ? crossMissed : (type === 'in' ? arrowIn : arrowOut);
+            item.innerHTML = `
+                <div class="history-ico ${cls}">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${glyph}</svg>
+                </div>
+                <div class="history-info">
+                    <div class="history-number">${number}</div>
+                    <div class="history-meta">${meta}</div>
+                </div>
+                <button class="btn-callback" onclick="redial('${number}')">Llamar</button>
+                <span class="history-time">Hoy ${hm}</span>`;
+            list.prepend(item);
+            list.scrollTop = 0;
+            return item;
+        }
+
+        // ---------- Teclado físico ----------
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('incomingOverlay').classList.contains('show')) {
+                rejectCall();
+                return;
+            }
+            const keys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '#'];
+            if (keys.includes(e.key)) addDigit(e.key);
+            else if (e.key === 'Backspace') deleteDigit();
+            else if (e.key === 'Enter') call();
+        });
+    </script>
+
+</body>
+</html>

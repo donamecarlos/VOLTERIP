@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>volterIP · Acceso</title>
+    <style>
+        :root {
+            --white: #FFFFFF;
+            --green-dark: #1B590F;
+            --green: #287D14;
+            --black: #1A1A1A;
+            --gray-100: #F7FAF8;
+            --gray-200: #E8EDEB;
+            --gray-300: #CFDBD5;
+            --gray-400: #8AA08E;
+            --red: #D0342C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Source Sans Pro', Arial, sans-serif;
+        }
+
+        body {
+            background: var(--white);
+            color: var(--black);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(560px 360px at 12% 8%, rgba(40, 125, 20, .08), transparent 60%),
+                radial-gradient(620px 420px at 90% 85%, rgba(27, 89, 15, .10), transparent 60%);
+            pointer-events: none;
+        }
+
+        ::selection {
+            background: rgba(40, 125, 20, .2);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+            animation: fadeDown .5s ease both;
+        }
+
+        @keyframes fadeDown {
+            from { opacity: 0; transform: translateY(-14px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .brand-logo {
+            width: 46px;
+            height: 46px;
+            border-radius: 11px;
+            background: var(--green-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 22px rgba(27, 89, 15, .3);
+        }
+
+        .brand-name {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--green-dark);
+            letter-spacing: -0.5px;
+        }
+
+        .brand-name span {
+            color: var(--green);
+        }
+
+        .auth-card {
+            position: relative;
+            width: 100%;
+            max-width: 420px;
+            background: var(--white);
+            border: 1px solid var(--gray-200);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(26, 26, 26, .10);
+            padding: 34px 36px 30px;
+            animation: fadeUp .55s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(18px) scale(.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: var(--gray-100);
+            border: 1px solid var(--gray-200);
+            border-radius: 12px;
+            padding: 4px;
+            margin-bottom: 28px;
+            gap: 4px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 9px;
+            background: transparent;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-400);
+            cursor: pointer;
+            transition: all .3s ease;
+        }
+
+        .tab:hover {
+            color: var(--green-dark);
+        }
+
+        .tab.active {
+            background: var(--green);
+            color: var(--white);
+            box-shadow: 0 6px 16px rgba(40, 125, 20, .3);
+        }
+
+        /* Formularios */
+        .form-panel {
+            display: none;
+        }
+
+        .form-panel.active {
+            display: block;
+            animation: fadeSlide .4s ease;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--green-dark);
+            margin-bottom: 8px;
+        }
+
+        .field .input-wrap {
+            position: relative;
+        }
+
+        .field input {
+            width: 100%;
+            padding: 13px 14px 13px 42px;
+            border: 1px solid var(--gray-300);
+            border-radius: 11px;
+            font-size: 15px;
+            color: var(--black);
+            background: var(--white);
+            outline: none;
+            transition: border-color .25s ease, box-shadow .25s ease;
+        }
+
+        .field input::placeholder {
+            color: var(--gray-400);
+        }
+
+        .field input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 4px rgba(40, 125, 20, .14);
+        }
+
+        .field .input-wrap .ico {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-400);
+            display: flex;
+            transition: color .25s ease;
+        }
+
+        .field input:focus ~ .ico,
+        .field .input-wrap:focus-within .ico {
+            color: var(--green);
+        }
+
+        .field .toggle-pass {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: transparent;
+            padding: 8px;
+            cursor: pointer;
+            color: var(--gray-400);
+            display: flex;
+            border-radius: 8px;
+            transition: color .25s ease, background .25s ease;
+        }
+
+        .field .toggle-pass:hover {
+            color: var(--green-dark);
+            background: var(--gray-100);
+        }
+
+        .form-options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--gray-400);
+            cursor: pointer;
+        }
+
+        .remember input {
+            accent-color: var(--green);
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+        }
+
+        .link {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--green);
+            text-decoration: none;
+            transition: color .2s ease;
+        }
+
+        .link:hover {
+            color: var(--green-dark);
+            text-decoration: underline;
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 11px;
+            background: var(--green);
+            color: var(--white);
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all .3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary:hover {
+            background: var(--green-dark);
+            box-shadow: 0 10px 26px rgba(27, 89, 15, .32);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: scale(.97);
+        }
+
+        .btn-primary svg {
+            transition: transform .3s ease;
+        }
+
+        .btn-primary:hover svg {
+            transform: translateX(4px);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 26px 0 20px;
+            color: var(--gray-400);
+            font-size: 12px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--gray-200);
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13px;
+            color: var(--gray-400);
+        }
+
+        .hline-note {
+            margin-top: 32px;
+            text-align: center;
+            font-size: 13px;
+            color: var(--gray-400);
+            animation: fadeUp .6s ease both;
+        }
+
+        .hline-note a {
+            color: var(--green);
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .hline-note a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mensaje de error / éxito */
+        .form-msg {
+            display: none;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 18px;
+        }
+
+        .form-msg.show {
+            display: block;
+            animation: fadeSlide .35s ease;
+        }
+
+        .form-msg.error {
+            background: #FDE8E8;
+            color: var(--red);
+            border: 1px solid #F5C6C2;
+        }
+
+        .form-msg.success {
+            background: #E5F2E0;
+            color: var(--green-dark);
+            border: 1px solid #CBE4C5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="brand">
+        <span class="brand-logo">
+            <svg width="24" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2 L14 9 C14.5 10.5 12 11 12 13 C12 11 9.5 10.5 10 9 Z" fill="#FFFFFF"/>
+            </svg>
+        </span>
+        <span class="brand-name">volter<span>IP</span></span>
+    </div>
+
+    <div class="auth-card">
+        <div class="tabs" id="tabs">
+            <button class="tab active" data-panel="login" onclick="switchTab(this)">Iniciar sesión</button>
+            <button class="tab" data-panel="register" onclick="switchTab(this)">Registrarse</button>
+        </div>
+
+        <!-- INICIO DE SESIÓN -->
+        <form class="form-panel active" id="panel-login" onsubmit="handleLogin(event)">
+            <div class="form-msg" id="loginMsg"></div>
+
+            <div class="field">
+                <label for="loginUser">Usuario o correo</label>
+                <div class="input-wrap">
+                    <input type="text" id="loginUser" placeholder="usuario@volterip.net" autocomplete="username" required>
+                    <span class="ico">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="loginPass">Contraseña</label>
+                <div class="input-wrap">
+                    <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" required>
+                    <span class="ico">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </span>
+                    <button type="button" class="toggle-pass" onclick="togglePass('loginPass', this)" title="Mostrar contraseña">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-options">
+                <label class="remember">
+                    <input type="checkbox" id="rememberMe">
+                    Recordarme
+                </label>
+                <a class="link" href="#">¿Olvidaste tu contraseña?</a>
+            </div>
+
+            <button type="submit" class="btn-primary">
+                Entrar
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                </svg>
+            </button>
+        </form>
+
+        <!-- REGISTRO -->
+        <form class="form-panel" id="panel-register" onsubmit="handleRegister(event)">
+            <div class="form-msg" id="regMsg"></div>
+
+            <div class="field">
+                <label for="regName">Nombre completo</label>
+                <div class="input-wrap">
+                    <input type="text" id="regName" placeholder="Ej. Ana García" autocomplete="name" required>
+                    <span class="ico">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="regEmail">Correo electrónico</label>
+                <div class="input-wrap">
+                    <input type="email" id="regEmail" placeholder="correo@ejemplo.com" autocomplete="email" required>
+                    <span class="ico">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+
+            <div class="form-options" style="margin-top:4px">
+                <label class="remember">
+                    <input type="checkbox" id="regAutoUser">
+                    Crear usuario con el correo como extensión
+                </label>
+            </div>
+
+            <div class="field">
+                <label for="regUser">Extensión / usuario SIP</label>
+                <div class="input-wrap">
+                    <input type="text" id="regUser" placeholder="Ej. 1001" autocomplete="username">
+                    <span class="ico">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="5" y="2" width="14" height="20" rx="2"/>
+                            <line x1="12" y1="18" x2="12.01" y2="18"/>
+                        </svg>
+                    </span>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="regPass">Contraseña</label>
+                <div class="input-wrap">
+                    <input type="password" id="regPass" placeholder="Mínimo 8 caracteres" autocomplete="new-password" required>
+                    <span class="ico">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </span>
+                    <button type="button" class="toggle-pass" onclick="togglePass('regPass', this)" title="Mostrar contraseña">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="regPass2">Confirmar contraseña</label>
+                <div class="input-wrap">
+                    <input type="password" id="regPass2" placeholder="Repite la contraseña" autocomplete="new-password" required>
+                    <span class="ico">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="11" width="18" height="11" rx="2"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                    </span>
+                    <button type="button" class="toggle-pass" onclick="togglePass('regPass2', this)" title="Mostrar contraseña">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary">
+                Crear cuenta
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="15 18 9 12 15 6"/>
+                </svg>
+            </button>
+        </form>
+    </div>
+
+    <p class="hline-note">¿Ya tienes una cuenta SIP? <a href="#" onclick="goToLogin()">Inicia sesión aquí</a></p>
+
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('#tabs .tab').forEach(t => t.classList.toggle('active', t === tab));
+            document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+            document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+        }
+
+        function togglePass(id, btn) {
+            const input = document.getElementById(id);
+            input.type = input.type === 'password' ? 'text' : 'password';
+            btn.classList.toggle('showed');
+        }
+
+        function showMsg(container, text, type) {
+            const msg = container;
+            msg.textContent = text;
+            msg.className = 'form-msg show ' + type;
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('loginUser').value.trim();
+            const pass = document.getElementById('loginPass').value;
+            const msg = document.getElementById('loginMsg');
+            const btn = e.target.querySelector('.btn-primary');
+
+            if (!user || !pass) {
+                showMsg(msg, 'Completa todos los campos.', 'error');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.style.opacity = 0.7;
+            btn.textContent = 'Verificando...';
+            showMsg(msg, '', 'error');
+
+            try {
+                const res = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user, password: pass })
+                });
+                const data = await res.json();
+
+                if (data.ok) {
+                    sessionStorage.setItem('volterip_user', JSON.stringify(data.user));
+                    showMsg(msg, data.msg + '. Accediendo al panel...', 'success');
+                    setTimeout(() => window.location.href = 'inicio.html', 900);
+                } else {
+                    btn.disabled = false;
+                    btn.style.opacity = 1;
+                    btn.textContent = 'Entrar';
+                    showMsg(msg, data.error || 'No se pudo iniciar sesión.', 'error');
+                }
+            } catch (err) {
+                btn.disabled = false;
+                btn.style.opacity = 1;
+                btn.textContent = 'Entrar';
+                showMsg(msg, 'Error de conexión con el servidor.', 'error');
+            }
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const ext = document.getElementById('regUser').value.trim();
+            const pass = document.getElementById('regPass').value;
+            const pass2 = document.getElementById('regPass2').value;
+            const auto = document.getElementById('regAutoUser').checked;
+            const msg = document.getElementById('regMsg');
+            const btn = e.target.querySelector('.btn-primary');
+
+            if (!name || !email || !pass || !pass2) {
+                showMsg(msg, 'Completa todos los campos obligatorios.', 'error');
+                return;
+            }
+            if (pass.length < 8) {
+                showMsg(msg, 'La contraseña debe tener al menos 8 caracteres.', 'error');
+                return;
+            }
+            if (pass !== pass2) {
+                showMsg(msg, 'Las contraseñas no coinciden.', 'error');
+                return;
+            }
+            const finalExt = ext || email.split('@')[0].replace(/[^0-9a-z]/gi, '');
+
+            btn.disabled = true;
+            btn.style.opacity = 0.7;
+            btn.textContent = 'Creando cuenta...';
+            showMsg(msg, '', 'error');
+
+            try {
+                const res = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, username: finalExt, extension: finalExt, password: pass })
+                });
+                const data = await res.json();
+
+                if (data.ok) {
+                    sessionStorage.setItem('volterip_user', JSON.stringify(data.user));
+                    showMsg(msg, data.msg + ' Redirigiendo...', 'success');
+                    setTimeout(() => window.location.href = 'inicio.html', 1000);
+                } else {
+                    btn.disabled = false;
+                    btn.style.opacity = 1;
+                    btn.textContent = 'Crear cuenta';
+                    showMsg(msg, data.error || 'No se pudo crear la cuenta.', 'error');
+                    const extInput = document.getElementById('regUser');
+                    if (data.conflict === 'extension' || data.conflict === 'username' || data.conflict === 'unique') {
+                        extInput.focus();
+                        extInput.select();
+                    }
+                }
+            } catch (err) {
+                btn.disabled = false;
+                btn.style.opacity = 1;
+                btn.textContent = 'Crear cuenta';
+                showMsg(msg, 'Error de conexión con el servidor.', 'error');
+            }
+        }
+
+        document.getElementById('regAutoUser').addEventListener('change', function () {
+            const extInput = document.getElementById('regUser');
+            if (this.checked) {
+                const local = document.getElementById('regEmail').value.split('@')[0].replace(/[^0-9a-z]/gi, '');
+                if (local) extInput.value = local;
+                extInput.disabled = true;
+            } else {
+                extInput.disabled = false;
+            }
+        });
+
+        function goToLogin() {
+            switchTab(document.querySelector('#tabs .tab[data-panel="login"]'));
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+
+</body>
+</html>
