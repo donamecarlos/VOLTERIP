@@ -47,13 +47,25 @@ async function connectDB() {
 }
 
 function normalizeUser(body) {
+    const extension = stripCountryCode(body.extension || body.username || '', body.country || '');
     return {
         name: (body.name || '').trim(),
         username: (body.username || '').trim().toLowerCase(),
-        extension: (body.extension || (body.username || '').trim()).trim(),
+        extension,
         country: (body.country || '').trim(),
         password: body.password || '',
     };
+}
+
+// Quita el prefijo del país de un número si empieza con él.
+// Ej.: país "505" + número "50576025991" -> "76025991".
+function stripCountryCode(number, country) {
+    let n = (number || '').replace(/\D/g, '');
+    const cc = (country || '').replace(/\D/g, '');
+    if (cc && n.startsWith(cc) && n.length > cc.length) {
+        n = n.slice(cc.length);
+    }
+    return n;
 }
 
 app.use(express.static(path.join(__dirname, 'views')));
@@ -124,6 +136,22 @@ app.post('/api/register', async (req, res) => {
 });
 
 // ---------- LOGIN ----------
+// Códigos de marcado conocidos para poder buscar la extensión sin su prefijo de país
+const KNOWN_COUNTRY_CODES = ['505', '506', '503', '502', '504', '507', '593', '591', '595', '598', '351',
+    '52', '57', '54', '56', '51', '58', '55', '34', '44', '33', '49', '39', '53', '1'];
+
+function withoutCountryPrefix(number) {
+    let n = (number || '').replace(/\D/g, '');
+    const sorted = [...KNOWN_COUNTRY_CODES].sort((a, b) => b.length - a.length);
+    for (const cc of sorted) {
+        if (n.length > cc.length && n.startsWith(cc)) {
+            n = n.slice(cc.length);
+            break;
+        }
+    }
+    return n;
+}
+
 app.post('/api/login', async (req, res) => {
     try {
         const usuario = (req.body.user || '').trim().toLowerCase();
@@ -133,7 +161,16 @@ app.post('/api/login', async (req, res) => {
             return res.status(400).json({ ok: false, error: 'Ingresa tu usuario y contraseña.' });
         }
 
-        const found = await users.findOne({ $or: [{ username: usuario }, { extension: usuario }] });
+        // Busca por usuario o por extensión (con o sin el prefijo del país)
+        const bareExt = withoutCountryPrefix(usuario);
+        let found = await users.findOne({
+            $or: [{ username: usuario }, { extension: usuario }, { extension: bareExt }]
+        });
+        // Respaldo: si no se encontró y el valor era numérico, buscar el número sin prefijo
+        if (!found && /\d/.test(usuario)) {
+            const extOnly = (usuario.match(/\d+/) || [''])[0];
+            found = await users.findOne({ extension: extOnly });
+        }
         if (!found) {
             return res.status(401).json({ ok: false, error: 'Usuario o contraseña incorrectos.' });
         }
@@ -227,9 +264,20 @@ app.delete('/api/tarifas', async (req, res) => {
 });
 
 // ================= SOCKET.IO · TELEFONÍA =================
-const online = new Map(); // extensión -> socket id
+// Cada extensión puede tener varios sockets a la vez (p. ej. mismo usuario
+// logueado en dos dispositivos o en dos pestañas). Al llamar, timbran todos.
+const online = new Map(); // extensión -> Set de socket ids
 const calls = new Map();  // callId -> estado de la llamada
 const NO_ANSWER_MS = 10000;
+
+function onlineSockets(ext) {
+    const set = online.get(ext);
+    if (!set) return [];
+    return [...set].filter((id) => {
+        const s = io.sockets.sockets.get(id);
+        return s && s.connected;
+    });
+}
 
 io.on('connection', (socket) => {
     socket.on('register', (data) => {
@@ -237,27 +285,43 @@ io.on('connection', (socket) => {
         if (!ext) return;
         socket.data.extension = ext;
         socket.data.userName = (data.name || '').trim();
-        online.set(ext, socket.id);
+        let set = online.get(ext);
+        if (!set) { set = new Set(); online.set(ext, set); }
+        set.add(socket.id);
         io.emit('presence', { extension: ext, online: true });
-        console.log('En línea:', ext, '(' + socket.data.userName + ')');
+        console.log('En línea:', ext, '(' + socket.data.userName + ') · socket ' + socket.id.slice(0, 6));
 
-        // Si hay una llamada sonando para esta extensión, reenviar el timbre al nuevo socket
-        // (p. ej. al abrir la app desde la notificación de llamada)
+        // Si hay una llamada sonando para esta extensión, reenviar el timbre a este socket
         for (const [cid, c] of calls.entries()) {
-            if (c.callee === ext && c.state === 'ringing') {
+            if (c.callee === ext && c.state === 'ringing' && !c.calleeSockets.has(socket.id)) {
+                c.calleeSockets.add(socket.id);
                 io.to(socket.id).emit('incoming_call', { callId: cid, from: c.caller, fromName: c.callerName || '' });
-                break;
             }
         }
+    });
+
+    // Pide la lista actual de extensiones en línea (para refrescar la web)
+    socket.on('presence_list', () => {
+        const seen = new Set();
+        const list = [];
+        for (const ext of online.keys()) {
+            const ids = onlineSockets(ext);
+            if (!ids.length || seen.has(ext)) continue;
+            seen.add(ext);
+            let name = socket.data.userName || '';
+            const anySocket = io.sockets.sockets.get(ids[0]);
+            if (anySocket && anySocket.data) name = anySocket.data.userName || name;
+            list.push({ extension: ext, name });
+        }
+        socket.emit('presence_list', { list });
     });
 
     socket.on('call', (dest) => {
         const src = socket.data.extension;
         if (!src) return;
-        const target = online.get(dest);
-        const targetSocket = target && io.sockets.sockets.get(target);
+        const targetSockets = onlineSockets(dest);
 
-        if (!targetSocket || !targetSocket.connected) {
+        if (!targetSockets.length) {
             socket.emit('call_result', { ok: false, reason: 'offline', dest });
             return;
         }
@@ -269,21 +333,26 @@ io.on('connection', (socket) => {
             callee: dest,
             callerName: socket.data.userName,
             callerSocket: socket.id,
-            calleeSocket: target,
+            calleeSockets: new Set(targetSockets),
+            calleeSocket: null, // socket que respondió
             state: 'ringing',
             timeout: null,
         };
 
         calls.set(callId, call);
         socket.emit('call_result', { ok: true, callId, state: 'ringing', dest });
-        io.to(target).emit('incoming_call', { callId, from: src, fromName: socket.data.userName });
+        for (const id of targetSockets) {
+            io.to(id).emit('incoming_call', { callId, from: src, fromName: socket.data.userName });
+        }
 
         call.timeout = setTimeout(() => {
             const c = calls.get(callId);
             if (!c || c.state !== 'ringing') return;
             c.state = 'no_answer';
             io.to(c.callerSocket).emit('call_ended', { callId, reason: 'no_answer' });
-            io.to(c.calleeSocket).emit('incoming_stop', { callId, reason: 'no_answer', from: c.caller });
+            for (const id of c.calleeSockets) {
+                io.to(id).emit('incoming_stop', { callId, reason: 'no_answer', from: c.caller });
+            }
             calls.delete(callId);
         }, NO_ANSWER_MS);
     });
@@ -293,14 +362,13 @@ io.on('connection', (socket) => {
         if (!call || call.state !== 'ringing') return;
         clearTimeout(call.timeout);
         call.state = 'active';
+        call.calleeSocket = socket.id;
         io.to(call.callerSocket).emit('call_accepted', { callId: call.callId, with: call.callee });
-        // Si el receptor ahora está en otro socket (p. ej. la app se abrió desde la notificación),
-        // conectar con el socket actual y avisar al anterior para que quite su notificación.
-        const calleeNow = online.get(call.callee) || call.calleeSocket;
-        io.to(calleeNow).emit('call_connected', { callId: call.callId, with: call.caller });
-        if (calleeNow !== call.calleeSocket) {
-            io.to(call.calleeSocket).emit('incoming_stop', { callId: call.callId, reason: 'answered', from: call.caller });
+        // Avisar a los demás sockets de la misma extensión que dejen de timbrar
+        for (const id of call.calleeSockets) {
+            if (id !== socket.id) io.to(id).emit('incoming_stop', { callId: call.callId, reason: 'answered', from: call.caller });
         }
+        socket.emit('call_connected', { callId: call.callId, with: call.caller });
     });
 
     socket.on('reject', (data) => {
@@ -309,6 +377,9 @@ io.on('connection', (socket) => {
         clearTimeout(call.timeout);
         call.state = 'rejected';
         io.to(call.callerSocket).emit('call_ended', { callId: call.callId, reason: 'rejected' });
+        for (const id of call.calleeSockets) {
+            io.to(id).emit('incoming_stop', { callId: call.callId, reason: 'rejected' });
+        }
         calls.delete(call.callId);
     });
 
@@ -318,14 +389,15 @@ io.on('connection', (socket) => {
         clearTimeout(call.timeout);
         const wasRinging = call.state === 'ringing';
         call.state = 'ended';
-        if (wasRinging) {
-            // El llamante colgó mientras el receptor timbraba
-            io.to(call.callerSocket).emit('call_ended', { callId: call.callId, reason: 'ended' });
-            io.to(call.calleeSocket).emit('incoming_stop', { callId: call.callId, reason: 'caller_hangup', from: call.caller });
-        } else {
-            io.to(call.callerSocket).emit('call_ended', { callId: call.callId, reason: 'ended' });
-            io.to(call.calleeSocket).emit('call_ended', { callId: call.callId, reason: 'ended' });
+        const calleeIds = wasRinging
+            ? call.calleeSockets
+            : (call.calleeSocket ? new Set([call.calleeSocket]) : call.calleeSockets);
+        for (const id of calleeIds) {
+            io.to(id).emit(wasRinging ? 'incoming_stop' : 'call_ended', {
+                callId: call.callId, reason: wasRinging ? 'caller_hangup' : 'ended', from: call.caller,
+            });
         }
+        io.to(call.callerSocket).emit('call_ended', { callId: call.callId, reason: 'ended' });
         calls.delete(call.callId);
     });
 
@@ -333,10 +405,14 @@ io.on('connection', (socket) => {
     const relayRTC = (eventName, data) => {
         const call = calls.get(data.callId);
         if (!call) return;
-        // El chiamante reenvía al receptor actual; el receptor reenvía al llamante original
-        const peer = socket.id === call.callerSocket
-            ? (online.get(call.callee) || call.calleeSocket)
-            : call.callerSocket;
+        // El llamante reenvía al socket que respondió; el receptor al socket llamante
+        let peer;
+        if (socket.id === call.callerSocket) {
+            peer = call.calleeSocket || (call.calleeSockets.size ? [...call.calleeSockets][0] : null);
+        } else {
+            peer = call.callerSocket;
+        }
+        if (!peer) return;
         io.to(peer).emit(eventName, { callId: data.callId, sdp: data.sdp, candidate: data.candidate });
     };
 
@@ -346,17 +422,42 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         const ext = socket.data.extension;
-        if (ext && online.get(ext) === socket.id) {
-            online.delete(ext);
-            io.emit('presence', { extension: ext, online: false });
-            console.log('Fuera de línea:', ext);
+        if (ext) {
+            const set = online.get(ext);
+            if (set) {
+                set.delete(socket.id);
+                if (!set.size) {
+                    online.delete(ext);
+                    io.emit('presence', { extension: ext, online: false });
+                    console.log('Fuera de línea:', ext);
+                }
+            }
         }
-        // Terminar llamadas activas de este usuario
+        // Terminar llamadas relacionadas con este socket
         for (const [callId, call] of calls.entries()) {
-            if (call.callerSocket === socket.id || call.calleeSocket === socket.id) {
-                clearTimeout(call.timeout);
+            const isCaller = call.callerSocket === socket.id;
+            const isRinging = call.state === 'ringing' && call.calleeSockets &&
+                              call.calleeSockets.has(socket.id);
+            const isActive = call.state === 'active' && call.calleeSocket === socket.id;
+            if (!isCaller && !isRinging && !isActive) continue;
+
+            clearTimeout(call.timeout);
+            if (isCaller) {
+                const ids = call.state === 'ringing' ? call.calleeSockets : new Set([call.calleeSocket]);
+                for (const id of ids) {
+                    if (id) io.to(id).emit(call.state === 'ringing' ? 'incoming_stop' : 'call_ended', { callId, reason: 'ended' });
+                }
+                calls.delete(callId);
+            } else if (isRinging) {
+                // Se cayó uno de los que timbraban: si no queda ninguno, terminar
+                call.calleeSockets.delete(socket.id);
+                if (!call.calleeSockets.size) {
+                    call.state = 'no_answer';
+                    io.to(call.callerSocket).emit('call_ended', { callId, reason: 'no_answer' });
+                    calls.delete(callId);
+                }
+            } else if (isActive) {
                 io.to(call.callerSocket).emit('call_ended', { callId, reason: 'ended' });
-                io.to(call.calleeSocket).emit('call_ended', { callId, reason: 'ended' });
                 calls.delete(callId);
             }
         }

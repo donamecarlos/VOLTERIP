@@ -875,6 +875,17 @@
             renderCountryButton();
         }
 
+        // Quita el prefijo del país de un número si empieza con él.
+        // Ej.: país "505" + número "50576025991" -> "76025991".
+        function stripCountryCode(number, country) {
+            let n = (number || '').replace(/\D/g, '');
+            const cc = (country || '').replace(/\D/g, '');
+            if (cc && n.startsWith(cc) && n.length > cc.length) {
+                n = n.slice(cc.length);
+            }
+            return n;
+        }
+
         function toggleCountryDrop() {
             const drop = document.getElementById('countryDrop');
             const btn = document.getElementById('countryBtn');
@@ -1028,7 +1039,9 @@
             e.preventDefault();
             const name = document.getElementById('regName').value.trim();
             const username = document.getElementById('regUser').value.trim();
-            const extension = document.getElementById('regExt').value.replace(/\D/g, '');
+            const rawExt = document.getElementById('regExt').value.replace(/\D/g, '');
+            // Se guarda solo el número, sin el prefijo del país
+            const extension = stripCountryCode(rawExt, selectedCountry.code);
             const pass = document.getElementById('regPass').value;
             const pass2 = document.getElementById('regPass2').value;
             const msg = document.getElementById('regMsg');

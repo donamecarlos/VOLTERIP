@@ -104,7 +104,6 @@
         }
 
         .connection-pill {
-            margin-left: auto;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -184,6 +183,7 @@
         /* ================= MENÚ DESPLEGABLE ================= */
         .menu-wrap {
             position: relative;
+            margin-left: auto;
         }
 
         .menu-btn {
@@ -640,6 +640,73 @@
             box-shadow: 0 0 10px rgba(208, 52, 44, .5);
         }
 
+        /* ---------- Usuarios en línea ---------- */
+        .online-box {
+            margin-top: 8px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border);
+        }
+
+        .online-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .online-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            transition: border-color .25s ease;
+        }
+
+        .online-list li:hover {
+            border-color: rgba(68, 214, 44, .35);
+        }
+
+        .online-list .ol-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--razer);
+            box-shadow: 0 0 8px rgba(68, 214, 44, .6);
+            flex-shrink: 0;
+        }
+
+        .online-list .ol-ext {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text);
+        }
+
+        .online-list .ol-name {
+            margin-left: auto;
+            font-size: 13px;
+            color: var(--muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .online-list .ol-empty {
+            justify-content: center;
+            color: var(--muted);
+            background: transparent;
+            border-style: dashed;
+            font-size: 13px;
+        }
+
+        .online-list .ol-me .ol-ext {
+            color: var(--razer);
+        }
+
         /* ---------- Reloj analógico ---------- */
         .clock-card {
             display: flex;
@@ -712,6 +779,17 @@
             font-size: 13px;
             color: var(--muted);
             text-transform: capitalize;
+        }
+
+        .dialer-card {
+            grid-column: 1 / -1;
+            max-width: 460px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .history-card {
+            grid-column: 1 / -1;
         }
 
         /* ---------- Marcador ---------- */
@@ -1488,7 +1566,7 @@
             }
 
             .server-panel {
-                width: calc(100vw - 28px);
+                width: calc(100% - 20px);
             }
 
             /* ===== Optimización móvil ===== */
@@ -1497,20 +1575,68 @@
                 gap: 8px;
             }
 
+            /* Sin blur en móvil: un ancestro con backdrop-filter rompe el
+               position: fixed del bottom sheet y lo ancla al header */
+            .topbar {
+                background: rgba(0, 0, 0, .96);
+                backdrop-filter: none;
+                -webkit-backdrop-filter: none;
+            }
+
             .menu-btn .menu-label {
                 display: none;
             }
 
+            /* Menú como bottom sheet de ancho completo */
             .dropdown {
-                min-width: 210px;
-                max-width: calc(100vw - 28px);
+                position: fixed;
+                left: 0;
                 right: 0;
-                max-height: 70vh;
+                bottom: 0;
+                top: auto;
+                width: 100%;
+                max-width: 100%;
+                min-width: 0;
+                max-height: 62vh;
+                border-radius: 18px 18px 0 0;
+                border-left: none;
+                border-right: none;
+                border-bottom: none;
+                padding: 8px 10px calc(12px + env(safe-area-inset-bottom));
+                box-shadow: 0 -18px 48px rgba(0, 0, 0, .85);
+                transform: translateY(calc(100% + 24px));
+                transform-origin: bottom center;
                 overflow-y: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .dropdown.open {
+                transform: translateY(0);
+            }
+
+            .dropdown::before {
+                content: '';
+                display: block;
+                width: 42px;
+                height: 4px;
+                margin: 2px auto 10px;
+                border-radius: 999px;
+                background: var(--border);
+            }
+
+            .drop-head {
+                padding: 12px 14px 8px;
             }
 
             .drop-item {
-                padding: 14px;
+                padding: 15px 14px;
+                gap: 14px;
+                font-size: 15px;
+            }
+
+            .drop-item .ico svg {
+                width: 22px;
+                height: 22px;
             }
 
             .card-title {
@@ -1639,14 +1765,6 @@
             <span id="connText">Sin conexión</span>
         </span>
 
-        <a class="logout-btn" href="login.html" title="Cerrar sesión">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                <polyline points="16 17 21 12 16 7"/>
-                <line x1="21" y1="12" x2="9" y2="12"/>
-            </svg>
-        </a>
-
         <div class="menu-wrap" id="menuWrap">
             <button class="menu-btn" id="menuBtn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
@@ -1715,6 +1833,14 @@
                 </div>
             </div>
         </div>
+
+        <a class="logout-btn" href="login.html" title="Cerrar sesión">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                <polyline points="16 17 21 12 16 7"/>
+                <line x1="21" y1="12" x2="9" y2="12"/>
+            </svg>
+        </a>
     </header>
 
     <!-- Contenido principal -->
@@ -1770,6 +1896,14 @@
                         </div>
                         <div class="stab-track"><div class="stab-fill" id="stabServerBar"></div></div>
                     </div>
+
+                    <div class="online-box">
+                        <div class="stab-title">
+                            <span class="k">Usuarios en línea</span>
+                            <span class="val" id="onlineCount">0</span>
+                        </div>
+                        <ul class="online-list" id="onlineList"></ul>
+                    </div>
                 </section>
 
                 <!-- Reloj analógico -->
@@ -1810,7 +1944,7 @@
             </div>
 
             <div class="grid">
-                <section class="card">
+                <section class="card dialer-card">
                     <div class="card-title">
                         <span class="ico">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1902,7 +2036,7 @@
             </div>
 
             <div class="grid">
-                <section class="card history">
+                <section class="card history history-card">
                     <div class="card-title">
                         <span class="ico">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -2128,9 +2262,51 @@
             setConnState('online');
             measureStability();
             socket.emit('register', { extension: myExt, name: sessionUser ? sessionUser.name : '' });
+            socket.emit('presence_list');
         });
         socket.on('disconnect', () => setConnState('offline'));
         socket.on('connect_error', () => setConnState('offline'));
+
+        // Heartbeat: se re-registra cada 12 s y refresca la lista de conectados
+        // para que la presencia siempre refleje quién está realmente en línea.
+        setInterval(() => {
+            if (socket.connected && myExt) {
+                socket.emit('register', { extension: myExt, name: sessionUser ? sessionUser.name : '' });
+                socket.emit('presence_list');
+            }
+        }, 12000);
+
+        // ---------- Usuarios en línea ----------
+        const onlineListEl = document.getElementById('onlineList');
+        const onlineCountEl = document.getElementById('onlineCount');
+
+        socket.on('presence_list', (data) => {
+            const list = (data && data.list) || [];
+            onlineCountEl.textContent = list.length;
+            onlineListEl.innerHTML = '';
+            if (!list.length) {
+                const li = document.createElement('li');
+                li.className = 'ol-empty';
+                li.textContent = 'No hay usuarios en línea';
+                onlineListEl.appendChild(li);
+                return;
+            }
+            list.forEach(u => {
+                const li = document.createElement('li');
+                const me = String(u.extension) === String(myExt);
+                if (me) li.classList.add('ol-me');
+                li.innerHTML =
+                    '<span class="ol-dot"></span>' +
+                    '<span class="ol-ext">' + u.extension + '</span>' +
+                    '<span class="ol-name">' + (me ? 'Tú' : (u.name || 'En línea')) + '</span>';
+                onlineListEl.appendChild(li);
+            });
+        });
+
+        // La presencia también cambia por eventos emitidos por el servidor
+        socket.on('presence', () => {
+            if (socket.connected) socket.emit('presence_list');
+        });
 
         // ---------- Estabilidad de red y servidor ----------
         async function serverPing() {
