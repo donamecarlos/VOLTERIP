@@ -5,16 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>volterIP</title>
     <style>
-        :root {
-            --white: #FFFFFF;
-            --green-dark: #1B590F;
-            --green: #287D14;
-            --black: #1A1A1A;
-            --gray-100: #F7FAF8;
-            --gray-200: #E8EDEB;
-            --gray-300: #CFDBD5;
-            --gray-400: #8AA08E;
-            --steel: #5B8FB9;
+:root {
+            --bg: #000000;
+            --bg2: #111111;
+            --razer: #44D62C;
+            --razer-dark: #1F7A16;
+            --text: #FFFFFF;
+            --muted: #B3B3B3;
+            --border: #2A2A2A;
+            --razer-hi: #5CFF45;
+            --steel: #8CC6F0;
             --red: #D0342C;
         }
 
@@ -27,16 +27,37 @@
 
         html {
             scroll-behavior: smooth;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background: var(--white);
-            color: var(--black);
+            background:
+                radial-gradient(900px 500px at 8% -10%, rgba(68, 214, 44, .07), transparent 60%),
+                radial-gradient(700px 420px at 100% 20%, rgba(31, 122, 22, .18), transparent 55%),
+                var(--bg);
+            background-attachment: fixed;
+            color: var(--text);
             min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Fondo animado con formas geométricas */
+        .bg-fx {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: .8;
+        }
+
+        .topbar,
+        .page {
+            position: relative;
+            z-index: 1;
         }
 
         ::selection {
-            background: rgba(40, 125, 20, .2);
+            background: rgba(68, 214, 44, .28);
         }
 
         /* ================= BARRA SUPERIOR ================= */
@@ -48,9 +69,9 @@
             align-items: center;
             gap: 16px;
             padding: 14px 32px;
-            background: rgba(255, 255, 255, .92);
+            background: rgba(0, 0, 0, .82);
             backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--gray-200);
+            border-bottom: 1px solid var(--border);
         }
 
         .brand {
@@ -64,22 +85,22 @@
             width: 38px;
             height: 38px;
             border-radius: 9px;
-            background: var(--green-dark);
+            background: var(--razer-dark);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 6px 16px rgba(27, 89, 15, .28);
+            box-shadow: 0 0 16px rgba(68, 214, 44, .35);
         }
 
         .brand-name {
             font-size: 22px;
             font-weight: 700;
-            color: var(--green-dark);
+            color: var(--text);
             letter-spacing: -0.3px;
         }
 
         .brand-name span {
-            color: var(--green);
+            color: var(--razer);
         }
 
         .connection-pill {
@@ -89,9 +110,9 @@
             gap: 8px;
             font-size: 13px;
             font-weight: 600;
-            color: var(--gray-400);
-            background: var(--gray-100);
-            border: 1px solid var(--gray-200);
+            color: var(--muted);
+            background: var(--bg2);
+            border: 1px solid var(--border);
             padding: 7px 14px;
             border-radius: 20px;
             transition: all .3s ease;
@@ -102,24 +123,24 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: var(--gray-300);
+            background: var(--border);
             transition: background .3s ease;
         }
 
         .connection-pill.online {
-            color: var(--green-dark);
+            color: var(--razer);
         }
 
         .connection-pill.online .dot {
-            background: var(--green);
-            box-shadow: 0 0 0 0 rgba(40, 125, 20, .4);
+            background: var(--razer);
+            box-shadow: 0 0 0 0 rgba(68, 214, 44, .4);
             animation: pulse 2s infinite;
         }
 
         .connection-pill.offline {
             color: var(--red);
-            border-color: #F5C6C2;
-            background: #FDE8E8;
+            border-color: rgba(208, 52, 44, .5);
+            background: rgba(208, 52, 44, .1);
         }
 
         .connection-pill.offline .dot {
@@ -141,23 +162,23 @@
             width: 38px;
             height: 38px;
             border-radius: 10px;
-            border: 1px solid var(--gray-300);
-            color: var(--gray-400);
-            background: var(--white);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            background: var(--bg2);
             transition: all .25s ease;
         }
 
         .logout-btn:hover {
             color: var(--red);
             border-color: var(--red);
-            background: #FDE8E8;
+            background: rgba(208, 52, 44, .12);
             transform: translateY(-1px);
         }
 
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(40, 125, 20, .4); }
-            70% { box-shadow: 0 0 0 8px rgba(40, 125, 20, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(40, 125, 20, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(68, 214, 44, .4); }
+            70% { box-shadow: 0 0 0 8px rgba(68, 214, 44, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(68, 214, 44, 0); }
         }
 
         /* ================= MENÚ DESPLEGABLE ================= */
@@ -172,17 +193,17 @@
             padding: 10px 18px;
             font-size: 15px;
             font-weight: 600;
-            color: var(--black);
-            background: var(--white);
-            border: 1px solid var(--gray-300);
+            color: var(--text);
+            background: var(--bg2);
+            border: 1px solid var(--border);
             border-radius: 10px;
             cursor: pointer;
             transition: all .25s ease;
         }
 
         .menu-btn:hover {
-            border-color: var(--green);
-            background: var(--gray-100);
+            border-color: var(--razer);
+            background: var(--bg);
             transform: translateY(-1px);
         }
 
@@ -195,10 +216,10 @@
         }
 
         .menu-wrap.open .menu-btn {
-            border-color: var(--green);
-            background: var(--green-dark);
-            color: var(--white);
-            box-shadow: 0 8px 20px rgba(27, 89, 15, .3);
+            border-color: var(--razer);
+            background: var(--razer-dark);
+            color: var(--text);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .5), 0 0 18px rgba(68, 214, 44, .25);
         }
 
         .menu-wrap.open .menu-btn .chevron {
@@ -210,10 +231,10 @@
             right: 0;
             top: calc(100% + 10px);
             min-width: 280px;
-            background: var(--white);
-            border: 1px solid var(--gray-200);
+            background: var(--bg2);
+            border: 1px solid var(--border);
             border-radius: 14px;
-            box-shadow: 0 16px 48px rgba(26, 26, 26, .14);
+            box-shadow: 0 16px 48px rgba(0, 0, 0, .7);
             padding: 8px;
             opacity: 0;
             visibility: hidden;
@@ -234,7 +255,7 @@
             font-weight: 700;
             letter-spacing: 1.4px;
             text-transform: uppercase;
-            color: var(--gray-400);
+            color: var(--muted);
         }
 
         .drop-item {
@@ -249,19 +270,19 @@
             background: transparent;
             font-size: 14px;
             font-weight: 500;
-            color: var(--black);
+            color: var(--text);
             cursor: pointer;
             text-align: left;
             transition: background .2s ease, transform .2s ease;
         }
 
         .drop-item:hover {
-            background: var(--gray-100);
+            background: rgba(68, 214, 44, .08);
             transform: translateX(3px);
         }
 
         .drop-item .ico {
-            color: var(--green);
+            color: var(--razer);
             display: flex;
             transition: transform .3s ease;
         }
@@ -271,7 +292,7 @@
         }
 
         .drop-item.arr {
-            border-top: 1px solid var(--gray-200);
+            border-top: 1px solid var(--border);
             margin-top: 6px;
             padding-top: 12px;
         }
@@ -281,8 +302,8 @@
             overflow: hidden;
             max-height: 0;
             opacity: 0;
-            background: var(--gray-100);
-            border: 1px solid var(--gray-200);
+            background: var(--bg);
+            border: 1px solid var(--border);
             border-radius: 10px;
             margin: 4px 4px 6px;
             transform: translateY(-6px);
@@ -303,25 +324,25 @@
             display: block;
             font-size: 13px;
             font-weight: 600;
-            color: var(--green-dark);
+            color: var(--muted);
             margin-bottom: 8px;
         }
 
         .server-panel-inner input {
             width: 100%;
             padding: 12px 14px;
-            border: 1px solid var(--gray-300);
+            border: 1px solid var(--border);
             border-radius: 9px;
             font-size: 14px;
-            color: var(--black);
-            background: var(--white);
+            color: var(--text);
+            background: var(--bg);
             outline: none;
             transition: border-color .25s ease, box-shadow .25s ease;
         }
 
         .server-panel-inner input:focus {
-            border-color: var(--green);
-            box-shadow: 0 0 0 4px rgba(40, 125, 20, .15);
+            border-color: var(--razer);
+            box-shadow: 0 0 0 4px rgba(68, 214, 44, .15);
         }
 
         .server-panel-inner .btn-connect {
@@ -330,8 +351,8 @@
             padding: 11px 14px;
             border: none;
             border-radius: 9px;
-            background: var(--green);
-            color: var(--white);
+            background: var(--razer);
+            color: #000;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
@@ -339,8 +360,8 @@
         }
 
         .server-panel-inner .btn-connect:hover {
-            background: var(--green-dark);
-            box-shadow: 0 8px 20px rgba(27, 89, 15, .3);
+            background: var(--razer-hi);
+            box-shadow: 0 8px 20px rgba(68, 214, 44, .35);
             transform: translateY(-1px);
         }
 
@@ -353,9 +374,9 @@
             padding: 12px 14px;
             font-size: 13px;
             font-weight: 600;
-            color: var(--green-dark);
-            background: #E5F2E0;
-            border: 1px solid #CBE4C5;
+            color: var(--razer);
+            background: rgba(68, 214, 44, .1);
+            border: 1px solid rgba(68, 214, 44, .35);
             border-radius: 9px;
         }
 
@@ -380,7 +401,7 @@
             font-size: 30px;
             font-weight: 700;
             letter-spacing: -0.5px;
-            color: var(--green-dark);
+            color: var(--text);
             margin-bottom: 6px;
         }
 
@@ -388,7 +409,7 @@
             display: block;
             font-size: 14px;
             font-weight: 400;
-            color: var(--gray-400);
+            color: var(--muted);
             margin-top: 4px;
         }
 
@@ -400,18 +421,40 @@
         }
 
         .card {
-            background: var(--white);
-            border: 1px solid var(--gray-200);
+            background: var(--bg2);
+            border: 1px solid var(--border);
             border-radius: 18px;
             padding: 28px;
-            box-shadow: 0 1px 2px rgba(26, 26, 26, .04);
-            transition: transform .3s ease, box-shadow .3s ease;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, .5);
+            transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
             scroll-margin-top: 96px;
         }
 
         .card:hover {
-            box-shadow: 0 18px 44px rgba(27, 89, 15, .1);
+            border-color: var(--razer);
+            box-shadow: 0 18px 44px rgba(0, 0, 0, .6), 0 0 0 1px rgba(68, 214, 44, .18);
             transform: translateY(-3px);
+        }
+
+        /* Superficies translúcidas con blur */
+        .card,
+        .dialer-display,
+        .server-panel,
+        .dropdown,
+        .incoming-card,
+        .ticket-card {
+            background: rgba(17, 17, 17, .9);
+            backdrop-filter: blur(20px) saturate(150%);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+        }
+
+        .key {
+            background: rgba(0, 0, 0, .6);
+        }
+
+        .history-item:hover,
+        .drop-item:hover {
+            background: rgba(68, 214, 44, .06);
         }
 
         .card-title {
@@ -422,7 +465,7 @@
             font-weight: 700;
             letter-spacing: 1.6px;
             text-transform: uppercase;
-            color: var(--green-dark);
+            color: var(--muted);
             margin-bottom: 22px;
         }
 
@@ -442,10 +485,10 @@
             letter-spacing: .4px;
             text-transform: none;
             padding: 7px 12px;
-            background: var(--white);
-            border: 1px solid var(--gray-300);
+            background: var(--bg);
+            border: 1px solid var(--border);
             border-radius: 9px;
-            color: var(--gray-400);
+            color: var(--muted);
             cursor: pointer;
             transition: all .25s ease;
         }
@@ -453,7 +496,7 @@
         .card-title .btn-clear:hover {
             color: var(--red);
             border-color: var(--red);
-            background: #FDE8E8;
+            background: rgba(208, 52, 44, .12);
             transform: translateY(-1px);
         }
 
@@ -461,12 +504,214 @@
             width: 30px;
             height: 30px;
             border-radius: 8px;
-            background: var(--gray-100);
-            border: 1px solid var(--gray-200);
+            background: var(--bg);
+            border: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--green);
+            color: var(--razer);
+        }
+
+        /* ================= VISTAS (SPA) ================= */
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+            animation: fadeSlide .4s ease;
+        }
+
+        /* ---------- Inicio · bienvenida ---------- */
+        .home-grid {
+            grid-template-columns: 1.15fr .85fr;
+            align-items: stretch;
+        }
+
+        .welcome-hero .hello {
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text);
+        }
+
+        .welcome-hero .hello .accent {
+            color: var(--razer);
+        }
+
+        .welcome-hero .subline {
+            font-size: 14px;
+            color: var(--muted);
+            margin-top: 6px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-row .k {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: .4px;
+        }
+
+        .info-row .v {
+            color: var(--text);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .info-row .v.off {
+            color: var(--red);
+        }
+
+        .info-state-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--red);
+            display: inline-block;
+            margin-right: 7px;
+            vertical-align: 1px;
+        }
+
+        .info-state-dot.ok {
+            background: var(--razer);
+            box-shadow: 0 0 8px rgba(68, 214, 44, .6);
+        }
+
+        .stab-block {
+            margin-top: 8px;
+            padding-top: 16px;
+            border-top: 1px dashed var(--border);
+        }
+
+        .stab-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 14px 0 7px;
+        }
+
+        .stab-title .k {
+            color: var(--muted);
+        }
+
+        .stab-title .val {
+            color: var(--razer);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .stab-track {
+            height: 8px;
+            border-radius: 6px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .stab-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 6px;
+            background: var(--razer);
+            box-shadow: 0 0 10px rgba(68, 214, 44, .5);
+            transition: width .8s ease, background .4s ease;
+        }
+
+        .stab-fill.mid {
+            background: #C9A227;
+            box-shadow: 0 0 10px rgba(201, 162, 39, .5);
+        }
+
+        .stab-fill.low {
+            background: var(--red);
+            box-shadow: 0 0 10px rgba(208, 52, 44, .5);
+        }
+
+        /* ---------- Reloj analógico ---------- */
+        .clock-card {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .clock {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+        }
+
+        .clock-face-svg {
+            width: min(240px, 100%);
+            height: auto;
+        }
+
+        .clock-face-svg .face {
+            fill: #0A0A0A;
+            stroke: var(--border);
+            stroke-width: 2;
+        }
+
+        .tick-minor {
+            stroke: var(--border);
+            stroke-width: 1.5;
+        }
+
+        .tick-major {
+            stroke: var(--razer);
+            stroke-width: 2.5;
+        }
+
+        .hand {
+            stroke-linecap: round;
+        }
+
+        .hand-hour {
+            stroke: var(--text);
+            stroke-width: 5;
+        }
+
+        .hand-minute {
+            stroke: var(--text);
+            stroke-width: 3.5;
+        }
+
+        .hand-second {
+            stroke: var(--razer);
+            stroke-width: 2;
+        }
+
+        .clock-center {
+            fill: var(--razer);
+        }
+
+        .clock-digital {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--razer);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .clock-date {
+            font-size: 13px;
+            color: var(--muted);
+            text-transform: capitalize;
         }
 
         /* ---------- Marcador ---------- */
@@ -479,8 +724,8 @@
         .dialer-display {
             width: 100%;
             max-width: 330px;
-            background: var(--gray-100);
-            border: 1px solid var(--gray-200);
+            background: var(--bg);
+            border: 1px solid var(--border);
             border-radius: 14px;
             padding: 18px 20px;
             margin-bottom: 24px;
@@ -489,13 +734,13 @@
             flex-direction: column;
             justify-content: center;
             align-items: flex-end;
-            border-bottom: 3px solid var(--green);
+            border-bottom: 3px solid var(--razer);
             transition: border-color .3s ease, box-shadow .3s ease;
         }
 
         .dialer-display:focus-within {
-            border-color: var(--green);
-            box-shadow: 0 0 0 4px rgba(40, 125, 20, .12);
+            border-color: var(--razer);
+            box-shadow: 0 0 0 4px rgba(68, 214, 44, .12);
         }
 
         .dialer-display .call-id {
@@ -503,7 +748,7 @@
             font-weight: 700;
             letter-spacing: 2px;
             min-height: 32px;
-            color: var(--black);
+            color: var(--text);
         }
 
         .dialer-display .call-timer {
@@ -511,7 +756,7 @@
             font-size: 30px;
             font-weight: 700;
             letter-spacing: 2px;
-            color: var(--green);
+            color: var(--razer);
             font-variant-numeric: tabular-nums;
             min-height: 38px;
         }
@@ -523,13 +768,13 @@
 
         .dialer-display .call-status {
             font-size: 12px;
-            color: var(--gray-400);
+            color: var(--muted);
             font-weight: 500;
             transition: color .3s ease;
         }
 
         .dialer-display.calling .call-status {
-            color: var(--green);
+            color: var(--razer);
             animation: blink 1.2s infinite;
         }
 
@@ -547,9 +792,9 @@
         .key {
             height: 62px;
             border-radius: 12px;
-            border: 1px solid var(--gray-300);
-            background: var(--white);
-            color: var(--black);
+            border: 1px solid var(--border);
+            background: var(--bg2);
+            color: var(--text);
             font-size: 21px;
             font-weight: 600;
             cursor: pointer;
@@ -557,10 +802,10 @@
         }
 
         .key:hover {
-            border-color: var(--green);
-            background: var(--gray-100);
+            border-color: var(--razer);
+            background: #0A0A0A;
             transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(40, 125, 20, .15);
+            box-shadow: 0 8px 18px rgba(68, 214, 44, .15);
         }
 
         .key:active {
@@ -572,7 +817,7 @@
             font-size: 9px;
             font-weight: 400;
             letter-spacing: 1px;
-            color: var(--gray-400);
+            color: var(--muted);
             text-transform: uppercase;
         }
 
@@ -604,7 +849,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--white);
+            color: var(--text);
             transition: all .3s ease;
         }
 
@@ -613,17 +858,18 @@
             font-weight: 700;
             letter-spacing: .8px;
             text-transform: uppercase;
-            color: var(--gray-400);
+            color: var(--muted);
         }
 
         .btn-call .ring {
-            background: var(--green);
-            box-shadow: 0 0 0 0 rgba(40, 125, 20, .45);
+            background: var(--razer);
+            color: #000;
+            box-shadow: 0 0 0 0 rgba(68, 214, 44, .45);
             animation: pulse 2.4s infinite;
         }
 
         .btn-call:hover .ring {
-            background: var(--green-dark);
+            background: var(--razer-hi);
             transform: scale(1.06);
         }
 
@@ -637,9 +883,9 @@
         }
 
         .btn-del .ring {
-            background: var(--white);
-            border: 1px solid var(--gray-300);
-            color: var(--black);
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            color: var(--muted);
         }
 
         .btn-del:hover .ring {
@@ -649,21 +895,21 @@
         }
 
         .btn-mute .ring {
-            background: var(--white);
-            border: 1px solid var(--gray-300);
-            color: var(--green-dark);
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            color: var(--razer);
         }
 
         .btn-mute:hover .ring {
-            border-color: var(--green);
-            background: var(--gray-100);
+            border-color: var(--razer);
+            background: var(--bg);
             transform: scale(1.06);
         }
 
         .btn-mute.muted .ring {
             background: var(--red);
             border-color: var(--red);
-            color: var(--white);
+            color: var(--text);
         }
 
         .btn-mute.muted:hover .ring {
@@ -689,7 +935,7 @@
         }
 
         .history-list::-webkit-scrollbar-thumb {
-            background: var(--gray-300);
+            background: var(--border);
             border-radius: 4px;
         }
 
@@ -701,7 +947,7 @@
             justify-content: center;
             gap: 14px;
             padding: 40px 16px;
-            color: var(--gray-400);
+            color: var(--muted);
             text-align: center;
         }
 
@@ -709,11 +955,11 @@
             width: 70px;
             height: 70px;
             border-radius: 50%;
-            background: var(--gray-100);
+            background: var(--bg);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--gray-300);
+            color: var(--border);
         }
 
         .history-empty p {
@@ -727,12 +973,12 @@
             gap: 14px;
             padding: 14px 12px;
             border-radius: 12px;
-            border-bottom: 1px solid var(--gray-200);
+            border-bottom: 1px solid var(--border);
             transition: all .25s ease;
         }
 
         .history-item:hover {
-            background: var(--gray-100);
+            background: #0A0A0A;
             transform: translateX(3px);
         }
 
@@ -752,17 +998,17 @@
         }
 
         .history-ico.out {
-            background: #E5F2E0;
-            color: var(--green);
+            background: rgba(68, 214, 44, .14);
+            color: var(--razer);
         }
 
         .history-ico.in {
-            background: #E8F1FA;
+            background: rgba(140, 198, 240, .16);
             color: var(--steel);
         }
 
         .history-ico.missed {
-            background: #FDE8E8;
+            background: rgba(208, 52, 44, .16);
             color: var(--red);
         }
 
@@ -774,7 +1020,7 @@
         .history-number {
             font-size: 16px;
             font-weight: 600;
-            color: var(--black);
+            color: var(--text);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -782,25 +1028,25 @@
 
         .history-meta {
             font-size: 13px;
-            color: var(--gray-400);
+            color: var(--muted);
         }
 
         .history-time {
             font-size: 12px;
-            color: var(--green-dark);
+            color: var(--razer);
             font-weight: 600;
             white-space: nowrap;
             transition: color .3s ease;
         }
 
         .history-item:hover .history-time {
-            color: var(--green);
+            color: var(--razer-hi);
         }
 
         .btn-callback {
             background: transparent;
-            color: var(--green);
-            border: 1px solid var(--gray-300);
+            color: var(--razer);
+            border: 1px solid var(--border);
             border-radius: 9px;
             padding: 8px 14px;
             font-size: 12px;
@@ -811,11 +1057,11 @@
         }
 
         .btn-callback:hover {
-            background: var(--green);
-            border-color: var(--green);
-            color: var(--white);
+            background: var(--razer);
+            border-color: var(--razer);
+            color: #000;
             transform: translateY(-1px);
-            box-shadow: 0 6px 14px rgba(40, 125, 20, .25);
+            box-shadow: 0 6px 14px rgba(68, 214, 44, .3);
         }
 
         .btn-ticket {
@@ -823,9 +1069,9 @@
             height: 30px;
             flex-shrink: 0;
             border-radius: 50%;
-            border: 1px solid var(--gray-300);
-            background: var(--white);
-            color: var(--green);
+            border: 1px solid var(--border);
+            background: var(--bg2);
+            color: var(--razer);
             font-size: 18px;
             font-weight: 700;
             line-height: 1;
@@ -834,23 +1080,23 @@
         }
 
         .btn-ticket:hover {
-            background: var(--green);
-            border-color: var(--green);
-            color: var(--white);
+            background: var(--razer);
+            border-color: var(--razer);
+            color: #000;
             transform: scale(1.12);
-            box-shadow: 0 6px 14px rgba(40, 125, 20, .3);
+            box-shadow: 0 6px 14px rgba(68, 214, 44, .35);
         }
 
         .history-empty {
             text-align: center;
             padding: 60px 20px;
-            color: var(--gray-400);
+            color: var(--muted);
         }
 
         .history-empty .big {
             display: block;
             margin-bottom: 12px;
-            color: var(--gray-300);
+            color: var(--border);
         }
 
         /* ---------- Llamada entrante ---------- */
@@ -858,7 +1104,7 @@
             position: fixed;
             inset: 0;
             z-index: 200;
-            background: rgba(26, 26, 26, .45);
+            background: rgba(0, 0, 0, .72);
             backdrop-filter: blur(4px);
             display: none;
             align-items: center;
@@ -874,9 +1120,10 @@
 
         .incoming-card {
             width: min(92vw, 360px);
-            background: var(--white);
+            background: var(--bg2);
+            border: 1px solid var(--border);
             border-radius: 20px;
-            box-shadow: 0 24px 70px rgba(26, 26, 26, .3);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, .7), 0 0 0 1px rgba(68, 214, 44, .12);
             padding: 30px 28px 24px;
             text-align: center;
             transform: translateY(24px) scale(.95);
@@ -892,17 +1139,17 @@
             height: 88px;
             margin: 0 auto 18px;
             border-radius: 50%;
-            background: var(--green);
+            background: var(--razer);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--white);
+            color: #000;
             animation: pulse 1.6s infinite;
         }
 
         .incoming-card h3 {
             font-size: 20px;
-            color: var(--black);
+            color: var(--text);
             margin-bottom: 4px;
         }
 
@@ -910,13 +1157,13 @@
             font-size: 32px;
             font-weight: 700;
             letter-spacing: 2px;
-            color: var(--green-dark);
+            color: var(--razer);
             margin-bottom: 6px;
         }
 
         .incoming-card .meta {
             font-size: 13px;
-            color: var(--gray-400);
+            color: var(--muted);
             margin-bottom: 24px;
         }
 
@@ -931,11 +1178,12 @@
         }
 
         .btn-answer .ring {
-            background: var(--green);
+            background: var(--razer);
+            color: #000;
         }
 
         .btn-answer:hover .ring {
-            background: var(--green-dark);
+            background: var(--razer-hi);
             transform: scale(1.06);
         }
 
@@ -953,7 +1201,7 @@
             position: fixed;
             inset: 0;
             z-index: 210;
-            background: rgba(26, 26, 26, .45);
+            background: rgba(0, 0, 0, .72);
             backdrop-filter: blur(4px);
             display: none;
             align-items: center;
@@ -969,9 +1217,10 @@
 
         .ticket-card {
             width: min(92vw, 380px);
-            background: var(--white);
+            background: var(--bg2);
+            border: 1px solid var(--border);
             border-radius: 20px;
-            box-shadow: 0 24px 70px rgba(26, 26, 26, .3);
+            box-shadow: 0 24px 70px rgba(0, 0, 0, .7);
             overflow: hidden;
             transform: translateY(24px) scale(.95);
             transition: transform .35s ease;
@@ -982,8 +1231,8 @@
         }
 
         .ticket-head {
-            background: var(--green-dark);
-            color: var(--white);
+            background: var(--razer-dark);
+            color: var(--text);
             padding: 20px 22px;
             display: flex;
             align-items: center;
@@ -999,7 +1248,7 @@
         .ticket-head .ticket-close {
             background: transparent;
             border: none;
-            color: var(--white);
+            color: var(--text);
             font-size: 22px;
             line-height: 1;
             cursor: pointer;
@@ -1021,17 +1270,17 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px 0;
-            border-bottom: 1px dashed var(--gray-200);
+            border-bottom: 1px dashed var(--border);
             font-size: 14px;
         }
 
         .ticket-row .k {
-            color: var(--gray-400);
+            color: var(--muted);
             font-weight: 500;
         }
 
         .ticket-row .v {
-            color: var(--black);
+            color: var(--text);
             font-weight: 600;
         }
 
@@ -1040,13 +1289,13 @@
         }
 
         .ticket-breakdown {
-            background: var(--gray-100);
-            border: 1px solid var(--gray-200);
+            background: var(--bg);
+            border: 1px solid var(--border);
             border-radius: 12px;
             padding: 14px 16px;
             margin-top: 16px;
             font-size: 13px;
-            color: var(--gray-400);
+            color: var(--muted);
         }
 
         .ticket-breakdown .line {
@@ -1057,8 +1306,8 @@
 
         .ticket-total {
             margin-top: 16px;
-            background: #E5F2E0;
-            border: 1px solid #CBE4C5;
+            background: rgba(68, 214, 44, .1);
+            border: 1px solid rgba(68, 214, 44, .35);
             border-radius: 12px;
             padding: 14px 16px;
             display: flex;
@@ -1069,7 +1318,7 @@
         .ticket-total .t {
             font-size: 13px;
             font-weight: 700;
-            color: var(--green-dark);
+            color: var(--razer);
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -1077,7 +1326,7 @@
         .ticket-total .amt {
             font-size: 22px;
             font-weight: 700;
-            color: var(--green-dark);
+            color: var(--razer-hi);
         }
 
         @media (max-width: 860px) {
@@ -1085,13 +1334,294 @@
                 grid-template-columns: 1fr;
             }
 
+            .home-grid {
+                grid-template-columns: 1fr;
+            }
+
             .connection-pill {
                 display: none;
             }
         }
+
+        @media (max-width: 640px) {
+            body {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+
+            .page {
+                padding: 20px 14px 36px;
+            }
+
+            .page-title {
+                font-size: 20px;
+                letter-spacing: -0.3px;
+            }
+
+            .welcome-hero .hello {
+                font-size: 24px;
+            }
+
+            .welcome-hero .subline {
+                font-size: 12px;
+            }
+
+            .page-title small {
+                font-size: 12px;
+            }
+
+            .grid {
+                gap: 16px;
+                margin-top: 20px;
+            }
+
+            .card {
+                padding: 18px 14px;
+                border-radius: 16px;
+                box-shadow: 0 6px 24px rgba(0, 0, 0, .5);
+            }
+
+            .card-title {
+                font-size: 11px;
+                margin-bottom: 16px;
+            }
+
+            .card-title .btn-clear {
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+
+            .keypad {
+                grid-template-columns: repeat(3, minmax(0, 74px));
+                gap: 11px;
+            }
+
+            .key {
+                height: 54px;
+                font-size: 19px;
+                border-radius: 11px;
+            }
+
+            .key .sub {
+                font-size: 8px;
+            }
+
+            .controls {
+                gap: 18px;
+            }
+
+            .round-btn .ring {
+                width: 62px;
+                height: 62px;
+            }
+
+            .round-btn .label {
+                font-size: 10px;
+            }
+
+            .dialer-display {
+                padding: 13px 14px;
+                min-height: 70px;
+                margin-bottom: 20px;
+            }
+
+            .history-number {
+                font-size: 14px;
+            }
+
+            .history-meta {
+                font-size: 12px;
+            }
+
+            .history-item {
+                padding: 11px 6px;
+                gap: 10px;
+            }
+
+            .history-ico {
+                width: 36px;
+                height: 36px;
+            }
+
+            .history-time {
+                font-size: 11px;
+            }
+
+            .btn-ticket {
+                width: 28px;
+                height: 28px;
+                font-size: 16px;
+            }
+
+            .topbar {
+                padding: 10px 14px;
+            }
+
+            .brand-name {
+                font-size: 17px;
+            }
+
+            .brand-logo {
+                width: 34px;
+                height: 34px;
+            }
+
+            .incoming-card,
+            .ticket-card {
+                width: min(94vw, 360px);
+            }
+
+            .incoming-actions .round-btn .ring {
+                width: 58px;
+                height: 58px;
+            }
+
+            .ticket-card {
+                border-radius: 16px;
+            }
+
+            .ticket-body {
+                padding: 16px 18px 20px;
+            }
+
+            .ticket-row {
+                font-size: 13px;
+            }
+
+            .server-panel {
+                width: calc(100vw - 28px);
+            }
+
+            /* ===== Optimización móvil ===== */
+            .menu-btn {
+                padding: 9px 12px;
+                gap: 8px;
+            }
+
+            .menu-btn .menu-label {
+                display: none;
+            }
+
+            .dropdown {
+                min-width: 210px;
+                max-width: calc(100vw - 28px);
+                right: 0;
+                max-height: 70vh;
+                overflow-y: auto;
+            }
+
+            .drop-item {
+                padding: 14px;
+            }
+
+            .card-title {
+                margin-bottom: 12px;
+            }
+
+            .info-row {
+                padding: 12px 0;
+            }
+
+            .info-row .v {
+                font-size: 15px;
+            }
+
+            .stab-title {
+                font-size: 12px;
+                margin: 11px 0 6px;
+            }
+
+            .clock-face-svg {
+                width: min(210px, 100%);
+            }
+
+            .clock-digital {
+                font-size: 22px;
+            }
+
+            .keypad {
+                grid-template-columns: repeat(3, minmax(64px, 1fr));
+                max-width: 300px;
+                width: 100%;
+            }
+
+            .key {
+                height: 58px;
+                font-size: 20px;
+            }
+
+            .key:active {
+                background: var(--razer-dark);
+            }
+
+            .round-btn .ring {
+                width: 68px;
+                height: 68px;
+            }
+
+            .dialer-display {
+                max-width: 100%;
+            }
+
+            .history-item {
+                padding: 13px 8px;
+            }
+
+            .history-info {
+                min-width: 0;
+            }
+
+            .topbar {
+                gap: 10px;
+                padding: 10px 12px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .brand-name {
+                font-size: 15px;
+            }
+
+            .brand-logo {
+                width: 31px;
+                height: 31px;
+            }
+
+            .menu-btn {
+                padding: 8px 10px;
+            }
+
+            .logout-btn {
+                width: 34px;
+                height: 34px;
+            }
+
+            .welcome-hero .hello {
+                font-size: 21px;
+            }
+
+            .round-btn .ring {
+                width: 60px;
+                height: 60px;
+            }
+
+            .round-btn .label {
+                font-size: 9px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .keypad {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                max-width: 300px;
+                width: 100%;
+            }
+        }
+    
     </style>
 </head>
 <body>
+
+    <canvas class="bg-fx" id="bgFx"></canvas>
 
     <!-- Barra superior con menú desplegable -->
     <header class="topbar">
@@ -1124,7 +1654,7 @@
                     <line x1="3" y1="12" x2="21" y2="12"/>
                     <line x1="3" y1="18" x2="21" y2="18"/>
                 </svg>
-                <span>Menú</span>
+                <span class="menu-label">Menú</span>
                 <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="6 9 12 15 18 9"/>
                 </svg>
@@ -1132,7 +1662,16 @@
 
             <div class="dropdown" id="dropdown">
                 <div class="drop-head">Navegación</div>
-                <button class="drop-item" data-scroll="dialerCard">
+                <button class="drop-item" data-view="home">
+                    <span class="ico">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                    </span>
+                    Inicio
+                </button>
+                <button class="drop-item" data-view="dialer">
                     <span class="ico">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
@@ -1140,7 +1679,7 @@
                     </span>
                     Marcador
                 </button>
-                <button class="drop-item" data-scroll="historyCard">
+                <button class="drop-item" data-view="history">
                     <span class="ico">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="10"/>
@@ -1167,7 +1706,7 @@
                 <div class="server-panel" id="serverPanel">
                     <div class="server-panel-inner">
                         <label for="serverInput">Dirección IP o URL del servidor</label>
-                        <input type="text" id="serverInput" placeholder="ej. 192.168.1.10 o sip.miempresa.com">
+                        <input type="text" id="serverInput" placeholder="ej. volter.com:8080 o 192.168.1.10">
                         <button class="btn-connect" onclick="connect()">Conectar</button>
                         <div class="server-ok" id="serverOk">
                             Conectando a <span id="serverIp">...</span>
@@ -1180,127 +1719,221 @@
 
     <!-- Contenido principal -->
     <main class="page">
-        <h1 class="page-title">
-            Panel de usuario
-            <small>Softphone de volterIP · llamadas sobre IP por internet</small>
-        </h1>
 
-        <div class="grid">
-            <!-- Marcador de números -->
-            <section class="card" id="dialerCard">
-                <div class="card-title">
-                    <span class="ico">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
-                        </svg>
-                    </span>
-                    Marcador
-                </div>
+        <!-- ============ VISTA INICIO ============ -->
+        <section class="view active" id="viewHome">
+            <div class="welcome-hero">
+                <h1 class="hello">Bienvenido, <span class="accent" id="welcomeName">Usuario</span></h1>
+                <p class="subline">Softphone de volterIP · llamadas sobre IP por internet</p>
+            </div>
 
-                <div class="dialer">
-                    <div class="dialer-display" id="display">
-                        <span class="call-id" id="numberDisplay"></span>
-                        <span class="call-timer" id="callTimer" title="Duración de la llamada">00:00:00</span>
-                        <span class="call-status" id="callStatus">Listo para marcar</span>
+            <div class="grid home-grid">
+                <!-- Datos del usuario + estabilidad -->
+                <section class="card">
+                    <div class="card-title">
+                        <span class="ico">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        </span>
+                        Mi línea
                     </div>
 
-                    <div class="keypad">
-                        <button class="key" onclick="addDigit('1')">1</button>
-                        <button class="key" onclick="addDigit('2')">2<span class="sub">ABC</span></button>
-                        <button class="key" onclick="addDigit('3')">3<span class="sub">DEF</span></button>
-                        <button class="key" onclick="addDigit('4')">4<span class="sub">GHI</span></button>
-                        <button class="key" onclick="addDigit('5')">5<span class="sub">JKL</span></button>
-                        <button class="key" onclick="addDigit('6')">6<span class="sub">MNO</span></button>
-                        <button class="key" onclick="addDigit('7')">7<span class="sub">PQRS</span></button>
-                        <button class="key" onclick="addDigit('8')">8<span class="sub">TUV</span></button>
-                        <button class="key" onclick="addDigit('9')">9<span class="sub">WXYZ</span></button>
-                        <button class="key" onclick="addDigit('*')">*</button>
-                        <button class="key" onclick="addDigit('0')">0<span class="sub">+</span></button>
-                        <button class="key" onclick="addDigit('#')">#</button>
+                    <div class="info-row">
+                        <span class="k">Número</span>
+                        <span class="v" id="infoNumber">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="k">Nombre</span>
+                        <span class="v" id="infoName">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="k">País</span>
+                        <span class="v" id="infoCountry">—</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="k">Estado</span>
+                        <span class="v" id="infoState"><span class="info-state-dot"></span> Conectando…</span>
                     </div>
 
-                    <div class="controls">
-                        <button class="round-btn btn-del" onclick="deleteDigit()">
-                            <span class="ring">
-                                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/>
-                                    <line x1="18" y1="9" x2="12" y2="15"/>
-                                    <line x1="12" y1="9" x2="18" y2="15"/>
-                                </svg>
-                            </span>
-                            <span class="label">Borrar</span>
-                        </button>
+                    <div class="stab-block">
+                        <div class="stab-title">
+                            <span class="k">Estabilidad de la red</span>
+                            <span class="val"><span id="stabNetworkPct">—</span> · <span id="stabNetworkLabel">Midiendo…</span></span>
+                        </div>
+                        <div class="stab-track"><div class="stab-fill" id="stabNetworkBar"></div></div>
 
-                        <button class="round-btn btn-mute" id="btnMute" onclick="toggleMute()" title="Silenciar micrófono">
-                            <span class="ring">
-                                <svg id="micOnIco" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
-                                    <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                                    <line x1="12" y1="19" x2="12" y2="22"/>
-                                </svg>
-                                <svg id="micOffIco" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
-                                    <line x1="1" y1="1" x2="23" y2="23"/>
-                                    <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V5a3 3 0 0 0-5.94-.6"/>
-                                    <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2c0 .86-.16 1.69-.43 2.45"/>
-                                    <line x1="12" y1="19" x2="12" y2="22"/>
-                                </svg>
-                            </span>
-                            <span class="label">Silenciar</span>
-                        </button>
+                        <div class="stab-title">
+                            <span class="k">Estabilidad del servidor</span>
+                            <span class="val"><span id="stabServerPct">—</span> · <span id="stabServerLabel">Midiendo…</span></span>
+                        </div>
+                        <div class="stab-track"><div class="stab-fill" id="stabServerBar"></div></div>
+                    </div>
+                </section>
 
-                        <button class="round-btn btn-call" onclick="call()">
-                            <span class="ring">
-                                <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
-                                </svg>
-                            </span>
-                            <span class="label">Llamar</span>
-                        </button>
+                <!-- Reloj analógico -->
+                <section class="card clock-card">
+                    <div class="card-title">
+                        <span class="ico">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </span>
+                        Hora local
+                    </div>
 
-                        <button class="round-btn btn-hangup" onclick="hangup()">
-                            <span class="ring">
-                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M10.25 17.44a2 2 0 0 1 0-2.88l1.2-1.2a2 2 0 0 1 2.83 0l3.9 3.9a2 2 0 0 1-.07 2.89l-1.5 1.37a2 2 0 0 1-2.45.18c-3.9-2.63-6.3-5.14-8.11-8.11a2 2 0 0 1 .18-2.45l1.37-1.5a2 2 0 0 1 2.9-.07l3.89 3.9a2 2 0 0 1 0 2.83z"/>
-                                </svg>
-                            </span>
-                            <span class="label">Colgar</span>
+                    <div class="clock">
+                        <svg class="clock-face-svg" viewBox="0 0 200 200">
+                            <circle class="face" cx="100" cy="100" r="96"/>
+                            <g id="clockTicks"></g>
+                            <g id="clockHands">
+                                <line class="hand hand-hour" id="handHour" x1="100" y1="100" x2="100" y2="58"/>
+                                <line class="hand hand-minute" id="handMinute" x1="100" y1="100" x2="100" y2="38"/>
+                                <line class="hand hand-second" id="handSecond" x1="100" y1="112" x2="100" y2="28"/>
+                            </g>
+                            <circle class="clock-center" cx="100" cy="100" r="4"/>
+                        </svg>
+                        <div class="clock-digital" id="clockDigital">--:--:--</div>
+                        <div class="clock-date" id="clockDate">—</div>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <!-- ============ VISTA MARCADOR ============ -->
+        <section class="view" id="viewDialer">
+            <div class="welcome-hero">
+                <h1 class="hello">Marcador</h1>
+                <p class="subline">Marca una extensión o número y pulsa Llamar</p>
+            </div>
+
+            <div class="grid">
+                <section class="card">
+                    <div class="card-title">
+                        <span class="ico">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                        </span>
+                        Marcador
+                    </div>
+
+                    <div class="dialer">
+                        <div class="dialer-display" id="display">
+                            <span class="call-id" id="numberDisplay"></span>
+                            <span class="call-timer" id="callTimer" title="Duración de la llamada">00:00:00</span>
+                            <span class="call-status" id="callStatus">Listo para marcar</span>
+                        </div>
+
+                        <div class="keypad">
+                            <button class="key" onclick="addDigit('1')">1</button>
+                            <button class="key" onclick="addDigit('2')">2<span class="sub">ABC</span></button>
+                            <button class="key" onclick="addDigit('3')">3<span class="sub">DEF</span></button>
+                            <button class="key" onclick="addDigit('4')">4<span class="sub">GHI</span></button>
+                            <button class="key" onclick="addDigit('5')">5<span class="sub">JKL</span></button>
+                            <button class="key" onclick="addDigit('6')">6<span class="sub">MNO</span></button>
+                            <button class="key" onclick="addDigit('7')">7<span class="sub">PQRS</span></button>
+                            <button class="key" onclick="addDigit('8')">8<span class="sub">TUV</span></button>
+                            <button class="key" onclick="addDigit('9')">9<span class="sub">WXYZ</span></button>
+                            <button class="key" onclick="addDigit('*')">*</button>
+                            <button class="key" onclick="addDigit('0')">0<span class="sub">+</span></button>
+                            <button class="key" onclick="addDigit('#')">#</button>
+                        </div>
+
+                        <div class="controls">
+                            <button class="round-btn btn-del" onclick="deleteDigit()">
+                                <span class="ring">
+                                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/>
+                                        <line x1="18" y1="9" x2="12" y2="15"/>
+                                        <line x1="12" y1="9" x2="18" y2="15"/>
+                                    </svg>
+                                </span>
+                                <span class="label">Borrar</span>
+                            </button>
+
+                            <button class="round-btn btn-mute" id="btnMute" onclick="toggleMute()" title="Silenciar micrófono">
+                                <span class="ring">
+                                    <svg id="micOnIco" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/>
+                                        <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+                                        <line x1="12" y1="19" x2="12" y2="22"/>
+                                    </svg>
+                                    <svg id="micOffIco" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="display:none">
+                                        <line x1="1" y1="1" x2="23" y2="23"/>
+                                        <path d="M9 9v3a3 3 0 0 0 5.12 2.12M15 9.34V5a3 3 0 0 0-5.94-.6"/>
+                                        <path d="M17 16.95A7 7 0 0 1 5 12v-2m14 0v2c0 .86-.16 1.69-.43 2.45"/>
+                                        <line x1="12" y1="19" x2="12" y2="22"/>
+                                    </svg>
+                                </span>
+                                <span class="label">Silenciar</span>
+                            </button>
+
+                            <button class="round-btn btn-call" onclick="call()">
+                                <span class="ring">
+                                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
+                                    </svg>
+                                </span>
+                                <span class="label">Llamar</span>
+                            </button>
+
+                            <button class="round-btn btn-hangup" onclick="hangup()">
+                                <span class="ring">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M10.25 17.44a2 2 0 0 1 0-2.88l1.2-1.2a2 2 0 0 1 2.83 0l3.9 3.9a2 2 0 0 1-.07 2.89l-1.5 1.37a2 2 0 0 1-2.45.18c-3.9-2.63-6.3-5.14-8.11-8.11a2 2 0 0 1 .18-2.45l1.37-1.5a2 2 0 0 1 2.9-.07l3.89 3.9a2 2 0 0 1 0 2.83z"/>
+                                    </svg>
+                                </span>
+                                <span class="label">Colgar</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <!-- ============ VISTA HISTORIAL ============ -->
+        <section class="view" id="viewHistory">
+            <div class="welcome-hero">
+                <h1 class="hello">Historial de llamadas</h1>
+                <p class="subline">Tus llamadas con costo y detalle de ticket</p>
+            </div>
+
+            <div class="grid">
+                <section class="card history">
+                    <div class="card-title">
+                        <span class="ico">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </span>
+                        Historial de llamadas
+
+                        <button class="btn-clear" onclick="clearHistory()">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                            Limpiar
                         </button>
                     </div>
-                </div>
-            </section>
 
-            <!-- Historial de llamadas -->
-            <section class="card history" id="historyCard">
-                <div class="card-title">
-                    <span class="ico">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/>
-                            <polyline points="12 6 12 12 16 14"/>
-                        </svg>
-                    </span>
-                    Historial de llamadas
+                    <ul class="history-list" id="historyList"></ul>
 
-                    <button class="btn-clear" onclick="clearHistory()">
-                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="3 6 5 6 21 6"/>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                        </svg>
-                        Limpiar
-                    </button>
-                </div>
-
-                <ul class="history-list" id="historyList"></ul>
-
-                <div class="history-empty" id="historyEmpty" style="display:none">
-                    <div class="he-ico">
-                        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
-                        </svg>
+                    <div class="history-empty" id="historyEmpty" style="display:none">
+                        <div class="he-ico">
+                            <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                        </div>
+                        <p>No hay llamadas registradas</p>
                     </div>
-                    <p>No hay llamadas registradas</p>
-                </div>
-            </section>
-        </div>
+                </section>
+            </div>
+        </section>
     </main>
 
     <!-- Ticket de llamada -->
@@ -1376,24 +2009,57 @@
     </div>
 
     <!-- Audios -->
-    <audio id="ringtone" src="/sounds/llamada_entrante.mp3" loop preload="auto"></audio>
-    <audio id="noAnswerSnd" src="/sounds/no_contesta.mp3" preload="auto"></audio>
+    <audio id="ringtone" src="sounds/llamada_entrante.mp3" loop preload="auto"></audio>
+    <audio id="noAnswerSnd" src="sounds/no_contesta.mp3" preload="auto"></audio>
     <audio id="offlineSnd" src="/sounds/no_en_linea.mp3" preload="auto"></audio>
     <audio id="remoteAudio" autoplay preload="auto"></audio>
 
-    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        document.write('<script src="/socket.io/socket.io.js"><\/script>');
+    </script>
 
     <script>
         let numero = '';
 
+        // ---------- Servidor guardado (web: localStorage) ----------
+        const isLocalFile = location.protocol === 'file:';
+
+        function getSavedServer() {
+            try { return localStorage.getItem('volterip_server') || ''; } catch (e) {}
+            return '';
+        }
+
+        function setSavedServer(v) {
+            try { localStorage.setItem('volterip_server', v); } catch (e) {}
+        }
+
+        function baseUrl() {
+            return isLocalFile ? getSavedServer() : '';
+        }
+
+        function normUrl(raw) {
+            let u = (raw || '').trim().replace(/\s+/g, '');
+            if (!u) return '';
+            if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(u)) u = 'http://' + u;
+            u = u.replace(/\/+$/, '');
+            return u;
+        }
+
+        function apiUrl(path) { return baseUrl() + path; }
+
         // ---------- Usuario conectado ----------
         const sessionUser = JSON.parse(sessionStorage.getItem('volterip_user') || 'null');
         if (sessionUser) {
-            const sub = document.querySelector('.page-title small');
-            sub.textContent = 'Hola, ' + sessionUser.name + ' · extensión ' + (sessionUser.extension || sessionUser.username) + ' · ' + (sessionUser.email || '') + ' · softphone volterIP';
+            document.getElementById('welcomeName').textContent = sessionUser.name || sessionUser.username || 'Usuario';
+            document.getElementById('infoNumber').textContent = sessionUser.extension || sessionUser.username || '—';
+            document.getElementById('infoName').textContent = sessionUser.name || '—';
+            document.getElementById('infoCountry').textContent = sessionUser.country ? '+' + sessionUser.country : '—';
         }
 
         document.querySelector('.logout-btn').addEventListener('click', () => sessionStorage.removeItem('volterip_user'));
+
+        document.querySelector('.brand').addEventListener('click', (e) => { e.preventDefault(); goView('home'); });
+
 
         // ---------- Menú desplegable ----------
         const menuWrap = document.getElementById('menuWrap');
@@ -1421,43 +2087,118 @@
             }
         });
 
-        document.querySelectorAll('.drop-item[data-scroll]').forEach(item => {
-            item.addEventListener('click', () => {
-                menuWrap.classList.remove('open');
-                dropdown.classList.remove('open');
-                const target = document.getElementById(item.dataset.scroll);
-                if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            });
+        document.querySelectorAll('.drop-item[data-view]').forEach(item => {
+            item.addEventListener('click', () => goView(item.dataset.view));
         });
+
+        // ---------- Navegación entre vistas (SPA) ----------
+        function goView(name) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            const target = document.getElementById('view' + name.charAt(0).toUpperCase() + name.slice(1));
+            if (target) target.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            menuWrap.classList.remove('open');
+            dropdown.classList.remove('open');
+            serverPanel.classList.remove('open');
+            serverItem.classList.remove('active');
+        }
 
         // ---------- Socket.IO · presencia y teléfono ----------
         const myExt = (sessionUser && (sessionUser.extension || sessionUser.username)) || '';
-        const socket = io();
+        const _serverUrl = baseUrl() || undefined;
+        const socket = io(_serverUrl);
         const connPill = document.getElementById('connPill');
         const connText = document.getElementById('connText');
 
         function setConnState(state) {
             connPill.classList.remove('online', 'offline');
+            const rowState = document.getElementById('infoState');
             if (state === 'online') {
                 connPill.classList.add('online');
                 connText.textContent = 'En línea';
+                rowState.innerHTML = '<span class="info-state-dot ok"></span> En línea';
             } else {
                 connPill.classList.add('offline');
                 connText.textContent = 'Sin conexión';
+                rowState.innerHTML = '<span class="info-state-dot"></span> Sin conexión';
             }
         }
 
         socket.on('connect', () => {
             setConnState('online');
+            measureStability();
             socket.emit('register', { extension: myExt, name: sessionUser ? sessionUser.name : '' });
         });
         socket.on('disconnect', () => setConnState('offline'));
         socket.on('connect_error', () => setConnState('offline'));
 
+        // ---------- Estabilidad de red y servidor ----------
+        async function serverPing() {
+            const start = performance.now();
+            try {
+                const res = await fetch(apiUrl('/api/ping'), { cache: 'no-store' });
+                if (!res.ok) return -1;
+                await res.json();
+                return performance.now() - start;
+            } catch (e) { return -1; }
+        }
+
+        function paintStab(barId, pctId, labelId, score, label) {
+            const bar = document.getElementById(barId);
+            score = Math.max(0, Math.min(100, Math.round(score || 0)));
+            bar.style.width = score + '%';
+            bar.classList.remove('mid', 'low');
+            if (score < 45) bar.classList.add('low');
+            else if (score < 75) bar.classList.add('mid');
+            document.getElementById(pctId).textContent = score + '%';
+            document.getElementById(labelId).textContent = label;
+        }
+
+        async function measureStability() {
+            // Servidor: latencia medida hacia /api/ping
+            const rtts = [];
+            for (let i = 0; i < 3; i++) {
+                const rtt = await serverPing();
+                if (rtt > 0) rtts.push(rtt);
+                await new Promise(r => setTimeout(r, 250));
+            }
+            let sScore, sLabel;
+            if (!rtts.length) {
+                sScore = 0; sLabel = 'Sin conexión';
+            } else {
+                const avg = rtts.reduce((a, b) => a + b, 0) / rtts.length;
+                sScore = Math.round(Math.max(0, Math.min(100, 100 - (avg / 10))));
+                sLabel = avg < 120 ? 'Excelente' : avg < 250 ? 'Buena' : avg < 450 ? 'Regular' : 'Lenta';
+            }
+            paintStab('stabServerBar', 'stabServerPct', 'stabServerLabel', sScore, sLabel);
+
+            // Red: tipo de conexión del navegador (si está disponible) combinado con la latencia
+            let nScore, nLabel;
+            const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+            if (conn && (conn.effectiveType || conn.downlink)) {
+                const map = {
+                    'slow-2g': [20, 'Muy lenta'],
+                    '2g': [30, 'Lenta'],
+                    '3g': [55, 'Regular'],
+                    '4g': [85, 'Buena'],
+                };
+                const base = (conn.effectiveType && map[conn.effectiveType]) ? map[conn.effectiveType] : [70, 'Buena'];
+                nScore = rtts.length ? Math.round(base[0] * 0.5 + sScore * 0.5) : base[0];
+                nLabel = base[1];
+            } else {
+                nScore = rtts.length ? sScore : 0;
+                nLabel = rtts.length ? sLabel : 'Sin conexión';
+            }
+            paintStab('stabNetworkBar', 'stabNetworkPct', 'stabNetworkLabel', nScore, nLabel);
+        }
+        measureStability();
+        setInterval(measureStability, 15000);
+
         // ---------- Sonidos ----------
         const ringtone = document.getElementById('ringtone');
         const noAnswerSnd = document.getElementById('noAnswerSnd');
         const offlineSnd = document.getElementById('offlineSnd');
+
 
         function stopSounds() {
             [ringtone, noAnswerSnd, offlineSnd].forEach(a => { a.pause(); a.currentTime = 0; });
@@ -1530,7 +2271,7 @@
             try {
                 await ensureLocalTracks(p);
             } catch (err) {
-                setStatus('No se pudo acceder al micrófono. Solo recibirás audio.', false);
+                setStatus('Micrófono no disponible. Solo escucharás audio (revisa el permiso).', false);
             }
             return p;
         }
@@ -1558,13 +2299,27 @@
 
         // ---------- Conexión al servidor SIP ----------
         function connect() {
-            const ip = document.getElementById('serverInput').value.trim();
+            const input = document.getElementById('serverInput');
+            const ip = input.value.trim();
             const okBox = document.getElementById('serverOk');
             const ipLabel = document.getElementById('serverIp');
             const btn = document.querySelector('.btn-connect');
 
-            const destino = ip || 'servidor volterIP';
+            const u = normUrl(ip);
+            const destino = u || ip || 'servidor volterIP';
             ipLabel.textContent = destino;
+
+            if (u) {
+                setSavedServer(u);
+                try {
+                    // Reinicia el socket apuntando al servidor elegido
+                    socket.disconnect();
+                    socket.io.uri = u;
+                    socket.connect();
+                } catch (err) { console.error('Reconexión:', err); }
+            } else {
+                setConnState('offline');
+            }
 
             btn.textContent = 'Conectando...';
             btn.disabled = true;
@@ -1572,8 +2327,15 @@
             setTimeout(() => {
                 okBox.classList.add('show');
                 btn.style.display = 'none';
-                document.getElementById('serverInput').style.display = 'none';
+                input.style.display = 'none';
                 document.querySelector('.server-panel-inner label').style.display = 'none';
+                setTimeout(() => {
+                    document.querySelector('.server-panel-inner label').style.display = '';
+                    input.style.display = '';
+                    btn.style.display = '';
+                    btn.disabled = false;
+                    btn.textContent = 'Conectar';
+                }, 4500);
             }, 800);
         }
 
@@ -1683,7 +2445,7 @@
                 seconds: secs,
                 type,
             };
-            fetch('/api/tarifas', {
+            fetch(apiUrl('/api/tarifas'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
@@ -1725,7 +2487,7 @@
         function clearHistory() {
             if (!myExt) return;
             if (!confirm('¿Vaciar el historial de llamadas y eliminar todos los tickets?')) return;
-            fetch('/api/tarifas?user=' + encodeURIComponent(myExt), { method: 'DELETE' })
+            fetch(apiUrl('/api/tarifas?user=' + encodeURIComponent(myExt)), { method: 'DELETE' })
                 .then(r => r.json())
                 .then(d => {
                     if (d && d.ok) {
@@ -1740,7 +2502,7 @@
 
         function loadHistory() {
             if (!myExt) return;
-            fetch('/api/tarifas?user=' + encodeURIComponent(myExt))
+            fetch(apiUrl('/api/tarifas?user=' + encodeURIComponent(myExt)))
                 .then(r => r.json())
                 .then(d => {
                     if (d && d.ok) {
@@ -2012,11 +2774,165 @@
                     return;
                 }
             }
+            const dialerView = document.getElementById('viewDialer');
+            if (!dialerView.classList.contains('active')) return;
             const keys = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '*', '#'];
             if (keys.includes(e.key)) addDigit(e.key);
             else if (e.key === 'Backspace') deleteDigit();
             else if (e.key === 'Enter') call();
         });
+
+        // ---------- Fondo animado (formas geométricas) ----------
+        function initBgFx() {
+            const canvas = document.getElementById('bgFx');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+            const NEON = ['44,214,44', '31,122,22', '92,255,69', '255,255,255'];
+
+            function resize() {
+                w = window.innerWidth;
+                h = window.innerHeight;
+                canvas.width = w * dpr;
+                canvas.height = h * dpr;
+                canvas.style.width = w + 'px';
+                canvas.style.height = h + 'px';
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            }
+            resize();
+            window.addEventListener('resize', resize);
+            window.addEventListener('orientationchange', resize);
+
+            function shape() {
+                const types = ['tri', 'sq', 'ring', 'diamond'];
+                return {
+                    type: types[Math.floor(Math.random() * types.length)],
+                    x: Math.random() * (w || 500),
+                    y: Math.random() * (h || 500),
+                    size: 26 + Math.random() * 60,
+                    vx: (-0.15 - Math.random() * 0.3) * (Math.random() < 0.5 ? -1 : 1),
+                    vy: (-0.15 - Math.random() * 0.3) * (Math.random() < 0.5 ? -1 : 1),
+                    rot: Math.random() * Math.PI * 2,
+                    vr: (-0.004 - Math.random() * 0.008) * (Math.random() < 0.5 ? -1 : 1),
+                    color: NEON[Math.floor(Math.random() * NEON.length)],
+                    alpha: 0.10 + Math.random() * 0.16,
+                };
+            }
+
+            let shapes = [];
+            const COUNT = w <= 480 ? 8 : 12;
+            for (let i = 0; i < COUNT; i++) shapes.push(shape());
+
+            function polygon(n, cx, cy, r, a0) {
+                ctx.beginPath();
+                for (let i = 0; i <= n; i++) {
+                    const a = a0 + (i / n) * Math.PI * 2;
+                    const px = cx + Math.cos(a) * r;
+                    const py = cy + Math.sin(a) * r;
+                    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+            }
+
+            function draw(s) {
+                ctx.save();
+                ctx.translate(s.x, s.y);
+                ctx.rotate(s.rot);
+                let r = s.size;
+                ctx.strokeStyle = 'rgba(' + s.color + ',' + s.alpha + ')';
+                ctx.lineWidth = 1.5;
+                if (s.type === 'tri') {
+                    polygon(3, 0, 0, r, 0);
+                } else if (s.type === 'sq') {
+                    ctx.rect(-r * 0.7, -r * 0.7, r * 1.4, r * 1.4);
+                } else if (s.type === 'diamond') {
+                    polygon(4, 0, 0, r, Math.PI / 4);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, r * 0.8, 0, Math.PI * 2);
+                }
+                ctx.stroke();
+                if (s.type === 'ring') {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, r * 0.34, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(' + s.color + ',' + (s.alpha * 0.55) + ')';
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+
+            function links() {
+                ctx.lineWidth = 0.7;
+                for (let i = 0; i < shapes.length; i++) {
+                    for (let j = i + 1; j < shapes.length; j++) {
+                        const a = shapes[i], b = shapes[j];
+                        const dx = a.x - b.x, dy = a.y - b.y;
+                        const d = Math.sqrt(dx * dx + dy * dy);
+                        if (d < 190) {
+                            ctx.strokeStyle = 'rgba(68,214,44,' + (0.05 * (1 - d / 190)) + ')';
+                            ctx.beginPath();
+                            ctx.moveTo(a.x, a.y);
+                            ctx.lineTo(b.x, b.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            function tick() {
+                ctx.clearRect(0, 0, w, h);
+                for (const s of shapes) {
+                    s.x += s.vx;
+                    s.y += s.vy;
+                    s.rot += s.vr;
+                    if (s.x < -90) s.x = w + 90;
+                    if (s.x > w + 90) s.x = -90;
+                    if (s.y < -90) s.y = h + 90;
+                    if (s.y > h + 90) s.y = -90;
+                }
+                links();
+                for (const s of shapes) draw(s);
+                requestAnimationFrame(tick);
+            }
+            tick();
+        }
+        initBgFx();
+
+        // ---------- Reloj analógico y digital ----------
+        function initClock() {
+            const ticks = document.getElementById('clockTicks');
+            for (let i = 0; i < 60; i++) {
+                const a = (i * 6 - 90) * Math.PI / 180;
+                const major = i % 5 === 0;
+                const inner = major ? 80 : 86;
+                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                line.setAttribute('x1', (100 + Math.cos(a) * inner).toFixed(2));
+                line.setAttribute('y1', (100 + Math.sin(a) * inner).toFixed(2));
+                line.setAttribute('x2', (100 + Math.cos(a) * 92).toFixed(2));
+                line.setAttribute('y2', (100 + Math.sin(a) * 92).toFixed(2));
+                line.setAttribute('class', major ? 'tick-major' : 'tick-minor');
+                ticks.appendChild(line);
+            }
+            function setHand(id, deg) {
+                document.getElementById(id).setAttribute('transform', 'rotate(' + deg + ' 100 100)');
+            }
+            function tick() {
+                const now = new Date();
+                setHand('handHour', (now.getHours() % 12) * 30 + now.getMinutes() * 0.5);
+                setHand('handMinute', now.getMinutes() * 6 + now.getSeconds() * 0.1);
+                setHand('handSecond', now.getSeconds() * 6);
+                document.getElementById('clockDigital').textContent =
+                    now.getHours().toString().padStart(2, '0') + ':' +
+                    now.getMinutes().toString().padStart(2, '0') + ':' +
+                    now.getSeconds().toString().padStart(2, '0');
+                document.getElementById('clockDate').textContent =
+                    now.toLocaleDateString('es', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            }
+            tick();
+            setInterval(tick, 1000);
+        }
+        initClock();
 
         // ---------- Historial y tickets desde la base de datos ----------
         loadHistory();

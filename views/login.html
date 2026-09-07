@@ -6,14 +6,14 @@
     <title>volterIP · Acceso</title>
     <style>
         :root {
-            --white: #FFFFFF;
-            --green-dark: #1B590F;
-            --green: #287D14;
-            --black: #1A1A1A;
-            --gray-100: #F7FAF8;
-            --gray-200: #E8EDEB;
-            --gray-300: #CFDBD5;
-            --gray-400: #8AA08E;
+            --bg: #000000;
+            --bg2: #111111;
+            --razer: #44D62C;
+            --razer-dark: #1F7A16;
+            --text: #FFFFFF;
+            --muted: #B3B3B3;
+            --border: #2A2A2A;
+            --razer-hi: #5CFF45;
             --red: #D0342C;
         }
 
@@ -25,8 +25,8 @@
         }
 
         body {
-            background: var(--white);
-            color: var(--black);
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -34,7 +34,7 @@
             justify-content: center;
             padding: 32px;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
         }
 
         body::before {
@@ -42,13 +42,32 @@
             position: absolute;
             inset: 0;
             background:
-                radial-gradient(560px 360px at 12% 8%, rgba(40, 125, 20, .08), transparent 60%),
-                radial-gradient(620px 420px at 90% 85%, rgba(27, 89, 15, .10), transparent 60%);
+                radial-gradient(720px 480px at 15% -10%, rgba(68, 214, 44, .10), transparent 60%),
+                radial-gradient(560px 420px at 95% 110%, rgba(31, 122, 22, .18), transparent 60%);
             pointer-events: none;
         }
 
+        /* Fondo animado con formas geométricas */
+        .bg-fx {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: .75;
+        }
+
+        .brand,
+        .auth-card,
+        .conn-chip,
+        .hline-note,
+        .server-box,
+        .server-hint {
+            position: relative;
+            z-index: 1;
+        }
+
         ::selection {
-            background: rgba(40, 125, 20, .2);
+            background: rgba(68, 214, 44, .25);
         }
 
         .brand {
@@ -68,32 +87,34 @@
             width: 46px;
             height: 46px;
             border-radius: 11px;
-            background: var(--green-dark);
+            background: var(--razer-dark);
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 8px 22px rgba(27, 89, 15, .3);
+            box-shadow: 0 0 22px rgba(68, 214, 44, .35);
         }
 
         .brand-name {
             font-size: 28px;
             font-weight: 700;
-            color: var(--green-dark);
+            color: var(--text);
             letter-spacing: -0.5px;
         }
 
         .brand-name span {
-            color: var(--green);
+            color: var(--razer);
         }
 
         .auth-card {
             position: relative;
             width: 100%;
             max-width: 420px;
-            background: var(--white);
-            border: 1px solid var(--gray-200);
+            background: rgba(17, 17, 17, .92);
+            backdrop-filter: blur(20px) saturate(150%);
+            -webkit-backdrop-filter: blur(20px) saturate(150%);
+            border: 1px solid var(--border);
             border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(26, 26, 26, .10);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .7), 0 0 0 1px rgba(68, 214, 44, .06);
             padding: 34px 36px 30px;
             animation: fadeUp .55s ease both;
         }
@@ -106,8 +127,8 @@
         /* Tabs */
         .tabs {
             display: flex;
-            background: var(--gray-100);
-            border: 1px solid var(--gray-200);
+            background: var(--bg);
+            border: 1px solid var(--border);
             border-radius: 12px;
             padding: 4px;
             margin-bottom: 28px;
@@ -122,19 +143,19 @@
             background: transparent;
             font-size: 14px;
             font-weight: 600;
-            color: var(--gray-400);
+            color: var(--muted);
             cursor: pointer;
             transition: all .3s ease;
         }
 
         .tab:hover {
-            color: var(--green-dark);
+            color: var(--razer);
         }
 
         .tab.active {
-            background: var(--green);
-            color: var(--white);
-            box-shadow: 0 6px 16px rgba(40, 125, 20, .3);
+            background: var(--razer);
+            color: #000000;
+            box-shadow: 0 0 18px rgba(68, 214, 44, .35);
         }
 
         /* Formularios */
@@ -160,8 +181,9 @@
             display: block;
             font-size: 13px;
             font-weight: 600;
-            color: var(--green-dark);
+            color: var(--muted);
             margin-bottom: 8px;
+            letter-spacing: .3px;
         }
 
         .field .input-wrap {
@@ -171,22 +193,22 @@
         .field input {
             width: 100%;
             padding: 13px 14px 13px 42px;
-            border: 1px solid var(--gray-300);
+            border: 1px solid var(--border);
             border-radius: 11px;
             font-size: 15px;
-            color: var(--black);
-            background: var(--white);
+            color: var(--text);
+            background: var(--bg);
             outline: none;
             transition: border-color .25s ease, box-shadow .25s ease;
         }
 
         .field input::placeholder {
-            color: var(--gray-400);
+            color: #666;
         }
 
         .field input:focus {
-            border-color: var(--green);
-            box-shadow: 0 0 0 4px rgba(40, 125, 20, .14);
+            border-color: var(--razer);
+            box-shadow: 0 0 0 4px rgba(68, 214, 44, .12);
         }
 
         .field .input-wrap .ico {
@@ -194,14 +216,14 @@
             left: 14px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--gray-400);
+            color: var(--muted);
             display: flex;
             transition: color .25s ease;
         }
 
         .field input:focus ~ .ico,
         .field .input-wrap:focus-within .ico {
-            color: var(--green);
+            color: var(--razer);
         }
 
         .field .toggle-pass {
@@ -213,15 +235,134 @@
             background: transparent;
             padding: 8px;
             cursor: pointer;
-            color: var(--gray-400);
+            color: var(--muted);
             display: flex;
             border-radius: 8px;
             transition: color .25s ease, background .25s ease;
         }
 
         .field .toggle-pass:hover {
-            color: var(--green-dark);
-            background: var(--gray-100);
+            color: var(--razer);
+            background: var(--bg);
+        }
+
+        /* Fila de extensión con nacionalidad */
+        .ext-row {
+            display: grid;
+            grid-template-columns: 130px 1fr;
+            gap: 8px;
+        }
+
+        .country-btn {
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 12px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all .25s ease;
+            white-space: nowrap;
+        }
+
+        .country-btn:hover {
+            border-color: var(--razer);
+            color: var(--razer);
+        }
+
+        .country-btn .chev {
+            font-size: 10px;
+            color: var(--muted);
+            transition: transform .25s ease;
+        }
+
+        .country-btn.open .chev {
+            transform: rotate(180deg);
+        }
+
+        .country-drop {
+            position: absolute;
+            left: 0;
+            top: calc(100% + 6px);
+            width: 280px;
+            max-height: 260px;
+            overflow-y: auto;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, .7);
+            z-index: 30;
+            padding: 6px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-6px);
+            transition: opacity .22s ease, transform .22s ease, visibility .22s;
+        }
+
+        .country-drop.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .country-drop::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .country-drop::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .country-opt {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 9px 10px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            color: var(--text);
+            font-size: 13.5px;
+            text-align: left;
+            cursor: pointer;
+            transition: background .18s ease;
+        }
+
+        .country-opt:hover {
+            background: rgba(68, 214, 44, .12);
+        }
+
+        .country-opt .flag {
+            font-size: 16px;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .country-opt .code {
+            margin-left: auto;
+            color: var(--razer);
+            font-weight: 600;
+            font-size: 12.5px;
+        }
+
+        .ext-hint {
+            margin-top: 7px;
+            font-size: 12px;
+            color: var(--muted);
+            min-height: 15px;
+        }
+
+        .ext-hint.detected {
+            color: var(--razer);
         }
 
         .form-options {
@@ -236,28 +377,15 @@
             align-items: center;
             gap: 8px;
             font-size: 13px;
-            color: var(--gray-400);
+            color: var(--muted);
             cursor: pointer;
         }
 
         .remember input {
-            accent-color: var(--green);
+            accent-color: var(--razer);
             width: 16px;
             height: 16px;
             cursor: pointer;
-        }
-
-        .link {
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--green);
-            text-decoration: none;
-            transition: color .2s ease;
-        }
-
-        .link:hover {
-            color: var(--green-dark);
-            text-decoration: underline;
         }
 
         .btn-primary {
@@ -265,8 +393,8 @@
             padding: 14px;
             border: none;
             border-radius: 11px;
-            background: var(--green);
-            color: var(--white);
+            background: var(--razer);
+            color: #000000;
             font-size: 15px;
             font-weight: 700;
             cursor: pointer;
@@ -278,8 +406,8 @@
         }
 
         .btn-primary:hover {
-            background: var(--green-dark);
-            box-shadow: 0 10px 26px rgba(27, 89, 15, .32);
+            background: var(--razer-hi);
+            box-shadow: 0 10px 26px rgba(68, 214, 44, .4);
             transform: translateY(-2px);
         }
 
@@ -295,45 +423,29 @@
             transform: translateX(4px);
         }
 
-        .divider {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin: 26px 0 20px;
-            color: var(--gray-400);
-            font-size: 12px;
-        }
-
-        .divider::before,
-        .divider::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: var(--gray-200);
-        }
-
         .auth-footer {
             text-align: center;
             margin-top: 24px;
             font-size: 13px;
-            color: var(--gray-400);
+            color: var(--muted);
         }
 
         .hline-note {
             margin-top: 32px;
             text-align: center;
             font-size: 13px;
-            color: var(--gray-400);
+            color: var(--muted);
             animation: fadeUp .6s ease both;
         }
 
         .hline-note a {
-            color: var(--green);
+            color: var(--razer);
             font-weight: 600;
             text-decoration: none;
         }
 
         .hline-note a:hover {
+            color: var(--razer-hi);
             text-decoration: underline;
         }
 
@@ -353,19 +465,141 @@
         }
 
         .form-msg.error {
-            background: #FDE8E8;
+            background: rgba(208, 52, 44, .15);
             color: var(--red);
-            border: 1px solid #F5C6C2;
+            border: 1px solid rgba(208, 52, 44, .45);
         }
 
         .form-msg.success {
-            background: #E5F2E0;
-            color: var(--green-dark);
-            border: 1px solid #CBE4C5;
+            background: rgba(68, 214, 44, .12);
+            color: var(--razer);
+            border: 1px solid rgba(68, 214, 44, .4);
+        }
+
+        /* Estado de conexión al servidor */
+        .conn-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: -10px auto 22px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: var(--bg2);
+            border: 1px solid var(--border);
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            user-select: none;
+            max-width: 100%;
+            animation: fadeUp .5s ease both;
+        }
+
+        .conn-chip:hover {
+            border-color: var(--razer);
+        }
+
+        .conn-chip .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #555;
+            flex-shrink: 0;
+        }
+
+        .conn-chip.on .dot { background: var(--razer); box-shadow: 0 0 8px rgba(68,214,44,.6); }
+        .conn-chip.off .dot { background: var(--red); box-shadow: 0 0 8px rgba(208,52,44,.6); }
+        .conn-chip.check .dot { background: #B3B3B3; animation: blinkdot 1s infinite; }
+
+        @keyframes blinkdot { 50% { opacity: .3; } }
+
+        .conn-chip .chev {
+            font-size: 10px;
+            color: var(--border);
+            transition: transform .25s ease;
+        }
+
+        .server-box {
+            display: none;
+            margin-top: 18px;
+            background: var(--bg);
+            border: 1px dashed var(--border);
+            border-radius: 14px;
+            padding: 16px;
+            animation: fadeSlide .3s ease;
+        }
+
+        .server-box.open { display: block; }
+
+        .server-box label {
+            display: block;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: .4px;
+            color: var(--razer);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .server-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .server-row input {
+            flex: 1;
+            min-width: 0;
+            padding: 12px 12px;
+            font-size: 14px;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            outline: none;
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .server-row input:focus { border-color: var(--razer); }
+
+        .server-row .btn-primary { width: auto; padding: 0 18px; }
+        .server-hint { margin-top: 10px; font-size: 11.5px; color: var(--muted); }
+
+    @media (max-width: 480px) {
+            body {
+                padding: 20px 16px;
+                justify-content: flex-start;
+            }
+
+            .brand {
+                margin-bottom: 22px;
+            }
+
+            .brand-name {
+                font-size: 23px;
+            }
+
+            .brand-logo {
+                width: 40px;
+                height: 40px;
+            }
+
+            .auth-card {
+                padding: 26px 20px 24px;
+                border-radius: 18px;
+            }
+
+            .ext-row {
+                grid-template-columns: 110px 1fr;
+            }
+
+            .country-drop {
+                width: min(80vw, 280px);
+            }
         }
     </style>
 </head>
 <body>
+
+    <canvas class="bg-fx" id="bgFx"></canvas>
 
     <div class="brand">
         <span class="brand-logo">
@@ -374,6 +608,12 @@
             </svg>
         </span>
         <span class="brand-name">volter<span>IP</span></span>
+    </div>
+
+    <div class="conn-chip" id="connChip" onclick="toggleServerBox()" title="Estado del servidor · toca para configurar">
+        <span class="dot" id="connDot"></span>
+        <span id="connChipText">Verificando servidor…</span>
+        <span class="chev">▾</span>
     </div>
 
     <div class="auth-card">
@@ -387,9 +627,9 @@
             <div class="form-msg" id="loginMsg"></div>
 
             <div class="field">
-                <label for="loginUser">Usuario o correo</label>
+                <label for="loginUser">Nombre de usuario</label>
                 <div class="input-wrap">
-                    <input type="text" id="loginUser" placeholder="usuario@volterip.net" autocomplete="username" required>
+                    <input type="text" id="loginUser" placeholder="tu_usuario" autocomplete="username" required>
                     <span class="ico">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -423,7 +663,6 @@
                     <input type="checkbox" id="rememberMe">
                     Recordarme
                 </label>
-                <a class="link" href="#">¿Olvidaste tu contraseña?</a>
             </div>
 
             <button type="submit" class="btn-primary">
@@ -453,36 +692,40 @@
             </div>
 
             <div class="field">
-                <label for="regEmail">Correo electrónico</label>
+                <label for="regUser">Nombre de usuario</label>
                 <div class="input-wrap">
-                    <input type="email" id="regEmail" placeholder="correo@ejemplo.com" autocomplete="email" required>
+                    <input type="text" id="regUser" placeholder="Ej. ana_garcia" autocomplete="username" required>
                     <span class="ico">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
-                            <polyline points="22,6 12,13 2,6"/>
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
                         </svg>
                     </span>
                 </div>
-            </div>
-
-            <div class="form-options" style="margin-top:4px">
-                <label class="remember">
-                    <input type="checkbox" id="regAutoUser">
-                    Crear usuario con el correo como extensión
-                </label>
             </div>
 
             <div class="field">
-                <label for="regUser">Extensión / usuario SIP</label>
-                <div class="input-wrap">
-                    <input type="text" id="regUser" placeholder="Ej. 1001" autocomplete="username">
-                    <span class="ico">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="5" y="2" width="14" height="20" rx="2"/>
-                            <line x1="12" y1="18" x2="12.01" y2="18"/>
-                        </svg>
-                    </span>
+                <label for="regExt">Extensión / número</label>
+                <div class="ext-row">
+                    <div class="input-wrap">
+                        <button type="button" class="country-btn" id="countryBtn" onclick="toggleCountryDrop()">
+                            <span class="flag" id="countryFlag">🇳🇮</span>
+                            <span id="countryCode">+505</span>
+                            <span class="chev">▾</span>
+                        </button>
+                        <div class="country-drop" id="countryDrop"></div>
+                    </div>
+                    <div class="input-wrap">
+                        <input type="tel" id="regExt" placeholder="Ej. 7350 0000" inputmode="numeric" autocomplete="tel" required>
+                        <span class="ico">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="5" y="2" width="14" height="20" rx="2"/>
+                                <line x1="12" y1="18" x2="12.01" y2="18"/>
+                            </svg>
+                        </span>
+                    </div>
                 </div>
+                <div class="ext-hint" id="extHint">El país se detecta solo al escribir el número. También puedes elegirlo.</div>
             </div>
 
             <div class="field">
@@ -532,9 +775,193 @@
         </form>
     </div>
 
-    <p class="hline-note">¿Ya tienes una cuenta SIP? <a href="#" onclick="goToLogin()">Inicia sesión aquí</a></p>
+    <p class="hline-note">¿Ya tienes una cuenta? <a href="#" onclick="goToLogin()">Inicia sesión aquí</a></p>
+
+    <div class="server-box" id="serverBox">
+        <label>Dirección del servidor volterIP</label>
+        <div class="server-row">
+            <input type="text" id="serverInput" placeholder="ej. volter.com:8080 o 192.168.1.10"
+                   inputmode="url" autocapitalize="off" autocorrect="off" spellcheck="false">
+            <button type="button" class="btn-primary" onclick="saveServer()">Conectar</button>
+        </div>
+        <p class="server-hint">Se guarda una vez y puedes cambiarlo desde el panel de usuario (botón Servidor). El login y registro necesitan el servidor.</p>
+    </div>
 
     <script>
+        /* ---------- Servidor (localStorage) ---------- */
+        const isLocal = location.protocol === 'file:';
+
+        function getSavedServer() {
+            try { return localStorage.getItem('volterip_server') || ''; } catch (e) {}
+            return '';
+        }
+
+        function setSavedServer(v) {
+            try { localStorage.setItem('volterip_server', v); } catch (e) {}
+        }
+
+        function baseUrl() {
+            return isLocal ? getSavedServer() : '';
+        }
+
+        function normUrl(raw) {
+            let u = (raw || '').trim().replace(/\s+/g, '');
+            if (!u) return '';
+            if (!/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(u)) u = 'http://' + u;
+            u = u.replace(/\/+$/, '');
+            return u;
+        }
+
+        /* ---------- Países y códigos de marcado ---------- */
+        /* Códigos ISO de teléfono. Se detectan por el prefijo del número escrito. */
+        const COUNTRIES = [
+            { name: 'Nicaragua',     flag: '🇳🇮', code: '505', iso: 'ni' },
+            { name: 'Estados Unidos / Canadá', flag: '🇺🇸', code: '1',  iso: 'us' },
+            { name: 'México',        flag: '🇲🇽', code: '52',  iso: 'mx' },
+            { name: 'Costa Rica',    flag: '🇨🇷', code: '506', iso: 'cr' },
+            { name: 'El Salvador',   flag: '🇸🇻', code: '503', iso: 'sv' },
+            { name: 'Guatemala',     flag: '🇬🇹', code: '502', iso: 'gt' },
+            { name: 'Honduras',      flag: '🇭🇳', code: '504', iso: 'hn' },
+            { name: 'Panamá',        flag: '🇵🇦', code: '507', iso: 'pa' },
+            { name: 'Rep. Dominicana', flag: '🇩🇴', code: '1',  iso: 'do' },
+            { name: 'Puerto Rico',   flag: '🇵🇷', code: '1',  iso: 'pr' },
+            { name: 'Colombia',      flag: '🇨🇴', code: '57',  iso: 'co' },
+            { name: 'Argentina',     flag: '🇦🇷', code: '54',  iso: 'ar' },
+            { name: 'Chile',         flag: '🇨🇱', code: '56',  iso: 'cl' },
+            { name: 'Perú',          flag: '🇵🇪', code: '51',  iso: 'pe' },
+            { name: 'Ecuador',       flag: '🇪🇨', code: '593', iso: 'ec' },
+            { name: 'Venezuela',     flag: '🇻🇪', code: '58',  iso: 've' },
+            { name: 'Bolivia',       flag: '🇧🇴', code: '591', iso: 'bo' },
+            { name: 'Paraguay',      flag: '🇵🇾', code: '595', iso: 'py' },
+            { name: 'Uruguay',       flag: '🇺🇾', code: '598', iso: 'uy' },
+            { name: 'Brasil',        flag: '🇧🇷', code: '55',  iso: 'br' },
+            { name: 'España',        flag: '🇪🇸', code: '34',  iso: 'es' },
+            { name: 'Reino Unido',   flag: '🇬🇧', code: '44',  iso: 'gb' },
+            { name: 'Francia',       flag: '🇫🇷', code: '33',  iso: 'fr' },
+            { name: 'Alemania',      flag: '🇩🇪', code: '49',  iso: 'de' },
+            { name: 'Italia',        flag: '🇮🇹', code: '39',  iso: 'it' },
+            { name: 'Portugal',      flag: '🇵🇹', code: '351', iso: 'pt' },
+            { name: 'Cuba',          flag: '🇨🇺', code: '53',  iso: 'cu' },
+        ];
+
+        let selectedCountry = COUNTRIES[0]; // Nicaragua por defecto
+
+        function buildCountryDrop() {
+            const drop = document.getElementById('countryDrop');
+            drop.innerHTML = '';
+            COUNTRIES.forEach(c => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'country-opt';
+                b.innerHTML = '<span class="flag">' + c.flag + '</span>' +
+                              '<span class="name">' + c.name + '</span>' +
+                              '<span class="code">+' + c.code + '</span>';
+                b.addEventListener('click', () => {
+                    selectCountry(c);
+                    closeCountryDrop();
+                    document.getElementById('regExt').focus();
+                });
+                drop.appendChild(b);
+            });
+        }
+
+        function renderCountryButton() {
+            document.getElementById('countryFlag').textContent = selectedCountry.flag;
+            document.getElementById('countryCode').textContent = '+' + selectedCountry.code;
+        }
+
+        function selectCountry(c) {
+            selectedCountry = c;
+            renderCountryButton();
+        }
+
+        function toggleCountryDrop() {
+            const drop = document.getElementById('countryDrop');
+            const btn = document.getElementById('countryBtn');
+            const open = drop.classList.toggle('open');
+            btn.classList.toggle('open', open);
+        }
+
+        function closeCountryDrop() {
+            document.getElementById('countryDrop').classList.remove('open');
+            document.getElementById('countryBtn').classList.remove('open');
+        }
+
+        document.addEventListener('click', (e) => {
+            const wrap = document.querySelector('.field .ext-row .input-wrap');
+            if (!wrap || !wrap.contains(e.target)) closeCountryDrop();
+        });
+
+        // Auto-detección de país según los primeros dígitos escritos
+        const extInput = document.getElementById('regExt');
+        extInput.addEventListener('input', () => {
+            let digits = extInput.value.replace(/\D/g, '');
+            if (digits.length > 12) { digits = digits.slice(0, 12); extInput.value = digits; }
+            const hint = document.getElementById('extHint');
+            // código más largo primero para preferir +505 sobre +50/… 
+            const sorted = COUNTRIES.map(c => c.code).sort((a, b) => b.length - a.length);
+            for (const code of sorted) {
+                if (digits.startsWith(code)) {
+                    const c = COUNTRIES.find(x => x.code === code);
+                    if (c && c !== selectedCountry) {
+                        selectedCountry = c;
+                        renderCountryButton();
+                        hint.textContent = 'País detectado: ' + c.flag + ' ' + c.name + ' (+' + c.code + ')';
+                        hint.classList.add('detected');
+                    }
+                    return;
+                }
+            }
+            if (!digits) {
+                hint.textContent = 'El país se detecta solo al escribir el número. También puedes elegirlo.';
+                hint.classList.remove('detected');
+            } else {
+                hint.textContent = 'No se reconoce el país por el prefijo. Elige tu nacionalidad con el botón.';
+                hint.classList.remove('detected');
+            }
+        });
+
+        /* ---------- Chip de estado ---------- */
+        function setChip(text, state) {
+            const chip = document.getElementById('connChip');
+            const dot = document.getElementById('connDot');
+            chip.classList.remove('on', 'off', 'check');
+            if (state) chip.classList.add(state);
+            document.getElementById('connChipText').textContent = text;
+        }
+
+        async function checkServer() {
+            const b = baseUrl();
+            const endpoint = b + '/api/health';
+            setChip('Verificando servidor…', 'check');
+            try {
+                const r = await fetch(endpoint);
+                if (r.ok) { setChip(b ? 'Conectado · ' + b : 'Conectado al servidor', 'on'); return true; }
+                throw new Error('bad');
+            } catch (e) {
+                setChip('No conectado', 'off');
+                return false;
+            }
+        }
+
+        function toggleServerBox() {
+            const box = document.getElementById('serverBox');
+            box.classList.toggle('open');
+            if (box.classList.contains('open')) document.getElementById('serverInput').focus();
+        }
+
+        function saveServer() {
+            const raw = document.getElementById('serverInput').value;
+            const u = normUrl(raw);
+            if (!u) return;
+            setSavedServer(u);
+            document.getElementById('serverInput').value = '';
+            document.getElementById('serverBox').classList.remove('open');
+            checkServer();
+        }
+
+        function apiUrl(path) { return baseUrl() + path; }
+
         function switchTab(tab) {
             document.querySelectorAll('#tabs .tab').forEach(t => t.classList.toggle('active', t === tab));
             document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
@@ -571,7 +998,7 @@
             showMsg(msg, '', 'error');
 
             try {
-                const res = await fetch('/api/login', {
+                const res = await fetch(apiUrl('/api/login'), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user, password: pass })
@@ -592,22 +1019,22 @@
                 btn.disabled = false;
                 btn.style.opacity = 1;
                 btn.textContent = 'Entrar';
-                showMsg(msg, 'Error de conexión con el servidor.', 'error');
+                setChip('No conectado', 'off');
+                showMsg(msg, 'Sin conexión con el servidor. Toca el estado "No conectado" para configurar la IP.', 'error');
             }
         }
 
         async function handleRegister(e) {
             e.preventDefault();
             const name = document.getElementById('regName').value.trim();
-            const email = document.getElementById('regEmail').value.trim();
-            const ext = document.getElementById('regUser').value.trim();
+            const username = document.getElementById('regUser').value.trim();
+            const extension = document.getElementById('regExt').value.replace(/\D/g, '');
             const pass = document.getElementById('regPass').value;
             const pass2 = document.getElementById('regPass2').value;
-            const auto = document.getElementById('regAutoUser').checked;
             const msg = document.getElementById('regMsg');
             const btn = e.target.querySelector('.btn-primary');
 
-            if (!name || !email || !pass || !pass2) {
+            if (!name || !username || !extension || !pass || !pass2) {
                 showMsg(msg, 'Completa todos los campos obligatorios.', 'error');
                 return;
             }
@@ -619,58 +1046,244 @@
                 showMsg(msg, 'Las contraseñas no coinciden.', 'error');
                 return;
             }
-            const finalExt = ext || email.split('@')[0].replace(/[^0-9a-z]/gi, '');
 
             btn.disabled = true;
             btn.style.opacity = 0.7;
             btn.textContent = 'Creando cuenta...';
             showMsg(msg, '', 'error');
 
+            const body = {
+                name,
+                username,
+                extension,
+                country: selectedCountry.code,
+                password: pass,
+            };
+
             try {
-                const res = await fetch('/api/register', {
+                const res = await fetch(apiUrl('/api/register'), {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, email, username: finalExt, extension: finalExt, password: pass })
+                    body: JSON.stringify(body)
                 });
                 const data = await res.json();
 
                 if (data.ok) {
                     sessionStorage.setItem('volterip_user', JSON.stringify(data.user));
-                    showMsg(msg, data.msg + ' Redirigiendo...', 'success');
+                    showMsg(msg, data.msg + ' · Estado de la cuenta: Conectado. Redirigiendo...', 'success');
                     setTimeout(() => window.location.href = 'inicio.html', 1000);
                 } else {
                     btn.disabled = false;
                     btn.style.opacity = 1;
                     btn.textContent = 'Crear cuenta';
-                    showMsg(msg, data.error || 'No se pudo crear la cuenta.', 'error');
-                    const extInput = document.getElementById('regUser');
+                    showMsg(msg, (data.error || 'No se pudo crear la cuenta.') + ' · Estado: Conectado pero el registro fue rechazado.', 'error');
                     if (data.conflict === 'extension' || data.conflict === 'username' || data.conflict === 'unique') {
-                        extInput.focus();
-                        extInput.select();
+                        const u = document.getElementById('regUser');
+                        u.focus();
+                        u.select();
                     }
                 }
             } catch (err) {
                 btn.disabled = false;
                 btn.style.opacity = 1;
                 btn.textContent = 'Crear cuenta';
-                showMsg(msg, 'Error de conexión con el servidor.', 'error');
+                setChip('No conectado', 'off');
+                showMsg(msg, 'Cuenta NO creada · Estado de la cuenta: No conectado al servidor. Configura la IP tocando el estado.', 'error');
             }
         }
-
-        document.getElementById('regAutoUser').addEventListener('change', function () {
-            const extInput = document.getElementById('regUser');
-            if (this.checked) {
-                const local = document.getElementById('regEmail').value.split('@')[0].replace(/[^0-9a-z]/gi, '');
-                if (local) extInput.value = local;
-                extInput.disabled = true;
-            } else {
-                extInput.disabled = false;
-            }
-        });
 
         function goToLogin() {
             switchTab(document.querySelector('#tabs .tab[data-panel="login"]'));
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        document.getElementById('serverInput').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') saveServer();
+        });
+
+        buildCountryDrop();
+        renderCountryButton();
+        initBgFx();
+        checkServer();
+        detectLocation();
+
+        /* ---------- Auto-detección de país por ubicación ---------- */
+        // Pide permiso de ubicación al abrir el login. Con las coordenadas averigua
+        // el país (geocodificación inversa vía Nominatim/OpenStreetMap, sin API key)
+        // y selecciona automáticamente el código de área correspondiente.
+        function detectLocation() {
+            const hint = document.getElementById('extHint');
+            if (!navigator.geolocation) {
+                hint.textContent = 'Tu navegador no permite ubicación. Elige tu país manualmente.';
+                return;
+            }
+            hint.textContent = 'Detectando tu ubicación para asignar el país…';
+            const onOk = (pos) => {
+                const lat = pos.coords.latitude;
+                const lon = pos.coords.longitude;
+                fetch(
+                    'https://nominatim.openstreetmap.org/reverse?format=json&zoom=3&addressdetails=1&lat=' +
+                    encodeURIComponent(lat) + '&lon=' + encodeURIComponent(lon),
+                    { headers: { 'Accept': 'application/json' } }
+                )
+                    .then(r => r.json())
+                    .then(geo => {
+                        const iso = (geo && geo.address && geo.address.country_code) || '';
+                        applyCountryByIso(iso, 'Tu ubicación es');
+                    })
+                    .catch(() => fallbackLanguage(isoGuess()));
+            };
+            const onErr = (err) => {
+                // Si el usuario no dio permiso o falla, se usa el idioma del dispositivo
+                fallbackLanguage(isoGuess());
+            };
+            // navigator.language/heurística permite adivinar el país aunque se niegue el permiso
+            function isoGuess() {
+                try { return (navigator.language || '').split('-')[1] || ''; } catch (e) { return ''; }
+            }
+            navigator.geolocation.getCurrentPosition(onOk, onErr, { timeout: 8000, maximumAge: 60000 });
+        }
+
+        function applyCountryByIso(iso, sourceLabel) {
+            if (!iso) { fallbackLanguage(''); return; }
+            const isoLower = iso.toLowerCase();
+            const c = COUNTRIES.find(x => x.iso === isoLower) ||
+                      (isoLower === 'ca' ? COUNTRIES.find(x => x.iso === 'us') : null);
+            if (!c) { fallbackLanguage(isoLower); return; }
+            selectedCountry = c;
+            renderCountryButton();
+            const hint = document.getElementById('extHint');
+            hint.textContent = sourceLabel + ' ' + c.flag + ' ' + c.name + ' (+' + c.code + '). Puedes cambiarlo.';
+            hint.classList.add('detected');
+        }
+
+        function fallbackLanguage(extIso) {
+            if (!extIso) return;
+            const c = COUNTRIES.find(x => x.iso === extIso);
+            if (!c) return;
+            selectedCountry = c;
+            renderCountryButton();
+            const hint = document.getElementById('extHint');
+            hint.textContent = 'País según tu idioma: ' + c.flag + ' ' + c.name + ' (+' + c.code + ').';
+            hint.classList.add('detected');
+        }
+
+        /* ---------- Fondo animado (formas geométricas) ---------- */
+        function initBgFx() {
+            const canvas = document.getElementById('bgFx');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let w, h;
+            const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+            const NEON = ['44,214,44', '31,122,22', '92,255,69', '255,255,255'];
+
+            function resize() {
+                w = window.innerWidth;
+                h = window.innerHeight;
+                canvas.width = w * dpr;
+                canvas.height = h * dpr;
+                canvas.style.width = w + 'px';
+                canvas.style.height = h + 'px';
+                ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            }
+            resize();
+            window.addEventListener('resize', resize);
+            window.addEventListener('orientationchange', resize);
+
+            // Formas: triángulos, cuadrados, anillos, rombos
+            function shape() {
+                const types = ['tri', 'sq', 'ring', 'diamond'];
+                return {
+                    type: types[Math.floor(Math.random() * types.length)],
+                    x: Math.random() * (w || 500),
+                    y: Math.random() * (h || 500),
+                    size: 26 + Math.random() * 60,
+                    vx: (-0.15 - Math.random() * 0.3) * (Math.random() < 0.5 ? -1 : 1),
+                    vy: (-0.15 - Math.random() * 0.3) * (Math.random() < 0.5 ? -1 : 1),
+                    rot: Math.random() * Math.PI * 2,
+                    vr: (-0.004 - Math.random() * 0.008) * (Math.random() < 0.5 ? -1 : 1),
+                    color: NEON[Math.floor(Math.random() * NEON.length)],
+                    alpha: 0.10 + Math.random() * 0.16,
+                };
+            }
+
+            let shapes = [];
+            const COUNT = w <= 480 ? 8 : 12;
+            for (let i = 0; i < COUNT; i++) shapes.push(shape());
+
+            function polygon(n, cx, cy, r, a0) {
+                ctx.beginPath();
+                for (let i = 0; i <= n; i++) {
+                    const a = a0 + (i / n) * Math.PI * 2;
+                    const px = cx + Math.cos(a) * r;
+                    const py = cy + Math.sin(a) * r;
+                    if (i === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+                }
+                ctx.closePath();
+            }
+
+            function draw(s) {
+                ctx.save();
+                ctx.translate(s.x, s.y);
+                ctx.rotate(s.rot);
+                let r = s.size;
+                ctx.strokeStyle = 'rgba(' + s.color + ',' + s.alpha + ')';
+                ctx.lineWidth = 1.5;
+                if (s.type === 'tri') {
+                    polygon(3, 0, 0, r, 0);
+                } else if (s.type === 'sq') {
+                    ctx.rect(-r * 0.7, -r * 0.7, r * 1.4, r * 1.4);
+                } else if (s.type === 'diamond') {
+                    polygon(4, 0, 0, r, Math.PI / 4);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, r * 0.8, 0, Math.PI * 2);
+                }
+                ctx.stroke();
+                if (s.type === 'ring') {
+                    ctx.beginPath();
+                    ctx.arc(0, 0, r * 0.34, 0, Math.PI * 2);
+                    ctx.strokeStyle = 'rgba(' + s.color + ',' + (s.alpha * 0.55) + ')';
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
+
+            // Líneas que unen formas cercanas
+            function links() {
+                ctx.lineWidth = 0.7;
+                for (let i = 0; i < shapes.length; i++) {
+                    for (let j = i + 1; j < shapes.length; j++) {
+                        const a = shapes[i], b = shapes[j];
+                        const dx = a.x - b.x, dy = a.y - b.y;
+                        const d = Math.sqrt(dx * dx + dy * dy);
+                        if (d < 190) {
+                            ctx.strokeStyle = 'rgba(68,214,44,' + (0.05 * (1 - d / 190)) + ')';
+                            ctx.beginPath();
+                            ctx.moveTo(a.x, a.y);
+                            ctx.lineTo(b.x, b.y);
+                            ctx.stroke();
+                        }
+                    }
+                }
+            }
+
+            function tick() {
+                ctx.clearRect(0, 0, w, h);
+                for (const s of shapes) {
+                    s.x += s.vx;
+                    s.y += s.vy;
+                    s.rot += s.vr;
+                    if (s.x < -90) s.x = w + 90;
+                    if (s.x > w + 90) s.x = -90;
+                    if (s.y < -90) s.y = h + 90;
+                    if (s.y > h + 90) s.y = -90;
+                }
+                links();
+                for (const s of shapes) draw(s);
+                requestAnimationFrame(tick);
+            }
+            tick();
         }
     </script>
 

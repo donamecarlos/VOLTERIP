@@ -34,8 +34,11 @@ async function connectDB() {
         tarifas = db.collection('tarifas');
         await users.createIndex({ username: 1 }, { unique: true });
         await users.createIndex({ extension: 1 }, { unique: true });
-        await users.createIndex({ email: 1 }, { unique: true });
         await tarifas.createIndex({ extension: 1, createdAt: -1 });
+        try {
+            // El registro ya no usa correo: se elimina el índice único por si quedó de versiones anteriores
+            await users.dropIndex('email_1');
+        } catch (e) { /* el índice no existe o ya fue eliminado */ }
         console.log('Conectado a MongoDB → base de datos: ' + dbName);
     } catch (err) {
         console.error('ERROR al conectar a MongoDB:', err.message);
@@ -46,9 +49,9 @@ async function connectDB() {
 function normalizeUser(body) {
     return {
         name: (body.name || '').trim(),
-        email: (body.email || '').trim().toLowerCase(),
-        username: (body.username || '').trim(),
+        username: (body.username || '').trim().toLowerCase(),
         extension: (body.extension || (body.username || '').trim()).trim(),
+        country: (body.country || '').trim(),
         password: body.password || '',
     };
 }
@@ -60,19 +63,23 @@ app.get('/api/health', (req, res) => {
     res.json({ ok: true, db: dbName });
 });
 
+app.get('/api/ping', (req, res) => {
+    res.json({ ok: true, t: Date.now() });
+});
+
 // ---------- REGISTRO ----------
 app.post('/api/register', async (req, res) => {
     try {
-        const { name, email, username, extension, password } = normalizeUser(req.body);
+        const { name, username, extension, country, password } = normalizeUser(req.body);
 
-        if (!name || !email || !username || !password) {
+        if (!name || !username || !extension || !password) {
             return res.status(400).json({ ok: false, error: 'Completa todos los campos obligatorios.' });
         }
         if (password.length < 8) {
             return res.status(400).json({ ok: false, error: 'La contraseña debe tener al menos 8 caracteres.' });
         }
-        if (!/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(email)) {
-            return res.status(400).json({ ok: false, error: 'El correo electrónico no es válido.' });
+        if (!/^[a-zA-Z0-9_.-]+$/.test(username)) {
+            return res.status(400).json({ ok: false, error: 'El nombre de usuario solo puede contener letras, números, guiones y puntos.' });
         }
 
         // Verificar si el usuario O la extensión ya existen
@@ -86,17 +93,12 @@ app.post('/api/register', async (req, res) => {
             });
         }
 
-        const dupEmail = await users.findOne({ email });
-        if (dupEmail) {
-            return res.status(409).json({ ok: false, error: 'El correo "' + email + '" ya está registrado.', conflict: 'email' });
-        }
-
         const passwordHash = await bcrypt.hash(password, 10);
         const user = {
             name,
-            email,
             username,
             extension,
+            country,
             passwordHash,
             status: 'disponible',
             createdAt: new Date(),
@@ -107,7 +109,7 @@ app.post('/api/register', async (req, res) => {
             return res.status(201).json({
                 ok: true,
                 msg: 'Cuenta creada correctamente.',
-                user: { id: result.insertedId, name, email, username, extension }
+                user: { id: result.insertedId, name, username, extension, country }
             });
         } catch (e) {
             if (e.code === 11000) {
@@ -131,7 +133,7 @@ app.post('/api/login', async (req, res) => {
             return res.status(400).json({ ok: false, error: 'Ingresa tu usuario y contraseña.' });
         }
 
-        const found = await users.findOne({ $or: [{ username: usuario }, { email: usuario }] });
+        const found = await users.findOne({ $or: [{ username: usuario }, { extension: usuario }] });
         if (!found) {
             return res.status(401).json({ ok: false, error: 'Usuario o contraseña incorrectos.' });
         }
@@ -144,7 +146,7 @@ app.post('/api/login', async (req, res) => {
         return res.json({
             ok: true,
             msg: 'Bienvenido ' + found.name,
-            user: { id: found._id, name: found.name, email: found.email, username: found.username, extension: found.extension }
+            user: { id: found._id, name: found.name, username: found.username, extension: found.extension, country: found.country || '' }
         });
     } catch (err) {
         console.error('Error en /login:', err);
@@ -238,6 +240,15 @@ io.on('connection', (socket) => {
         online.set(ext, socket.id);
         io.emit('presence', { extension: ext, online: true });
         console.log('En línea:', ext, '(' + socket.data.userName + ')');
+
+        // Si hay una llamada sonando para esta extensión, reenviar el timbre al nuevo socket
+        // (p. ej. al abrir la app desde la notificación de llamada)
+        for (const [cid, c] of calls.entries()) {
+            if (c.callee === ext && c.state === 'ringing') {
+                io.to(socket.id).emit('incoming_call', { callId: cid, from: c.caller, fromName: c.callerName || '' });
+                break;
+            }
+        }
     });
 
     socket.on('call', (dest) => {
@@ -256,6 +267,7 @@ io.on('connection', (socket) => {
             callId,
             caller: src,
             callee: dest,
+            callerName: socket.data.userName,
             callerSocket: socket.id,
             calleeSocket: target,
             state: 'ringing',
@@ -282,7 +294,13 @@ io.on('connection', (socket) => {
         clearTimeout(call.timeout);
         call.state = 'active';
         io.to(call.callerSocket).emit('call_accepted', { callId: call.callId, with: call.callee });
-        io.to(call.calleeSocket).emit('call_connected', { callId: call.callId, with: call.caller });
+        // Si el receptor ahora está en otro socket (p. ej. la app se abrió desde la notificación),
+        // conectar con el socket actual y avisar al anterior para que quite su notificación.
+        const calleeNow = online.get(call.callee) || call.calleeSocket;
+        io.to(calleeNow).emit('call_connected', { callId: call.callId, with: call.caller });
+        if (calleeNow !== call.calleeSocket) {
+            io.to(call.calleeSocket).emit('incoming_stop', { callId: call.callId, reason: 'answered', from: call.caller });
+        }
     });
 
     socket.on('reject', (data) => {
@@ -315,7 +333,10 @@ io.on('connection', (socket) => {
     const relayRTC = (eventName, data) => {
         const call = calls.get(data.callId);
         if (!call) return;
-        const peer = call.calleeSocket === socket.id ? call.callerSocket : call.calleeSocket;
+        // El chiamante reenvía al receptor actual; el receptor reenvía al llamante original
+        const peer = socket.id === call.callerSocket
+            ? (online.get(call.callee) || call.calleeSocket)
+            : call.callerSocket;
         io.to(peer).emit(eventName, { callId: data.callId, sdp: data.sdp, candidate: data.candidate });
     };
 
