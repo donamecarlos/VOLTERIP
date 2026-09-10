@@ -2597,9 +2597,21 @@
             return d.getFullYear() === now.getFullYear() ? y + ' ' + t : d.getFullYear() + '/' + y + ' ' + t;
         }
 
-        function metaFor(type, missed, secs) {
+        function durText(secs) {
+            const s = Math.max(0, Math.floor(secs || 0));
+            const m = Math.floor(s / 60);
+            const x = s % 60;
+            if (m && x) return m + ' min ' + x + ' s';
+            if (m) return m + ' min';
+            return x + ' s';
+        }
+
+        function metaFor(type, missed, secs, cost) {
             if (missed) return 'Perdida';
-            return (type === 'in' ? 'Entrante' : 'Saliente') + ' · ' + formatDur(secs) + ' min';
+            const base = (type === 'in' ? 'Entrante' : 'Saliente') + ' · ' + formatDur(secs) + ' min';
+            const c = Number(cost) || 0;
+            if (type === 'out' && c > 0) return base + ' · ' + money(c);
+            return base;
         }
 
         function syncEmpty() {
@@ -2615,6 +2627,8 @@
             const type = t.missed ? 'missed' : (t.type === 'in' ? 'in' : 'out');
             const isOutgoing = !t.missed && t.type === 'out' && secs > 0;
             t.cost = isOutgoing ? Math.round(secs * RATES.perSecond * 100) / 100 : 0;
+            const ri = document.querySelector('.history-item[data-tid="' + tid + '"] .history-meta');
+            if (ri) ri.textContent = metaFor(t.type, t.missed, t.seconds, t.cost);
             const body = {
                 caller: type === 'out' ? myExt : t.number,
                 callee: type === 'out' ? t.number : myExt,
@@ -2629,6 +2643,7 @@
                 if (d && d.ok && d.record) {
                     t.cost = d.record.cost || 0;
                     t.persisted = true;
+                    if (ri) ri.textContent = metaFor(t.type, t.missed, t.seconds, t.cost);
                 }
             }).catch(() => {});
         }
@@ -2644,11 +2659,11 @@
             const charged = !t.missed && t.type === 'out' && t.seconds > 0;
             if (charged) {
                 bd.innerHTML =
-                    '<div class="line"><span>Cobro por segundo</span><span>' + money(RATES.perSecond) + '</span></div>' +
-                    '<div class="line"><span>Cobro por minuto</span><span>' + money(RATES.perMinute) + '</span></div>' +
-                    '<div class="line"><span>Cobro por hora</span><span>' + money(RATES.perHour) + '</span></div>' +
-                    '<div class="line"><span>Duración</span><span>' + formatDur(t.seconds) + '</span></div>' +
-                    '<div class="line"><span>Desglose (' + t.seconds + ' s × C$0.08)</span><span>' + money(t.cost) + '</span></div>';
+                    '<div class="line"><span>Tarifa por segundo</span><span>' + money(RATES.perSecond) + '</span></div>' +
+                    '<div class="line"><span>Duración</span><span>' + durText(t.seconds) + '</span></div>' +
+                    '<div class="line"><span>Desglose (' + durText(t.seconds) + ' × ' + money(RATES.perSecond) + '/s)</span><span>' + money(t.cost) + '</span></div>' +
+                    '<div class="line"><span>Costo estimado por minuto</span><span>' + money(RATES.perMinute) + '</span></div>' +
+                    '<div class="line"><span>Costo estimado por hora</span><span>' + money(RATES.perHour) + '</span></div>';
             } else {
                 bd.innerHTML = '<div class="line"><span>Sin cargo para esta llamada</span><span>' + money(0) + '</span></div>';
             }
@@ -2718,7 +2733,7 @@
                 '</div>' +
                 '<div class="history-info">' +
                 '<div class="history-number">' + number + '</div>' +
-                '<div class="history-meta">' + metaFor(type, missed, rec.seconds) + '</div>' +
+                '<div class="history-meta">' + metaFor(type, missed, rec.seconds, rec.cost) + '</div>' +
                 '</div>' +
                 '<button class="btn-callback" onclick="redial(\'' + number + '\')">Llamar</button>' +
                 '<button class="btn-ticket" onclick="showTicket(\'' + tid + '\')" title="Ver ticket">+</button>' +
